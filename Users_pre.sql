@@ -1,18 +1,16 @@
+DROP TABLE IF EXISTS Users;
 CREATE TABLE Users (
-   Id                int,
-   Reputation        int,
-   CreationDate      datetime,
-   DisplayName       varchar(40),
-   LastAccessDate    datetime,
-   WebsiteUrl        varchar(200),
-   Location          varchar(100),
-   AboutMe           varchar(max),
-   Views             int,
-   UpVotes           int,
-   DownVotes         int,
-   ProfileImageUrl   varchar(200),
-   EmailHash         varchar(32),
-   Age               int,
-   AccountId         int
+   Id                int         not NULL,
+   Reputation        int         not NULL,
+   CreationDate      timestamp   not NULL,
+   DisplayName       varchar(40) not NULL,
+   LastAccessDate    timestamp,
+   WebsiteUrl        TEXT,
+   Location          TEXT,
+   AboutMe           TEXT,
+   Views             int         not NULL,
+   UpVotes           int         not NULL,
+   DownVotes         int         not NULL,
+   AccountId         int         -- NULL accountId == deleted account?
 );
 

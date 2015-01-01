@@ -1,4 +1,5 @@
 from lxml import etree
+from itertools import islice, chain
 
 # Efficient parsing of large XML files from
 # http://stackoverflow.com/a/9814580/987185
@@ -21,4 +22,9 @@ def parse(fp):
             del elem.getparent()[0]
         # make sure you have no references to Element objects outside the loop
 
+def batch(iterable, size):
+    sourceiter = iter(iterable)
+    while True:
+        batchiter = islice(sourceiter, size)
+        yield chain([batchiter.next()], batchiter)
 
