@@ -4,6 +4,10 @@ from itertools import islice, chain
 # Efficient parsing of large XML files from
 # http://stackoverflow.com/a/9814580/987185
 def parse(fp):
+    """Efficiently parses an XML file from the StackExchange data dump and
+    returns a generator which yields one row at a time.
+    """
+
     context = etree.iterparse(fp, events=('end',))
 
     for action, elem in context:
@@ -23,6 +27,7 @@ def parse(fp):
         # make sure you have no references to Element objects outside the loop
 
 def batch(iterable, size):
+    """Creates a batches of size `size` from the `iterable`."""
     sourceiter = iter(iterable)
     while True:
         batchiter = islice(sourceiter, size)
