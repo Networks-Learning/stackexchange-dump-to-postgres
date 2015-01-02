@@ -46,7 +46,7 @@ def handleTable(table, keys):
 
     # Handle content of the table
     start_time = time.time()
-    print 'Processing row in badges ...'
+    print 'Processing data ...'
     for rows in Processor.batch(Processor.parse(xml), 50):
         values = ',\n'.join(
                     [ _createCmdTuple(cur, keys, tmpl, row_attribs)
@@ -116,7 +116,7 @@ else:
           , 'CreationDate'
           , 'Score'
           , 'ViewCount'
-          , 'Body'
+          # , 'Body'
           , 'OwnerUserId'
           , 'LastEditorUserId'
           , 'LastEditorDisplayName'
