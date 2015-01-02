@@ -37,17 +37,17 @@ def handleTable(table, keys):
 
     start_time = time.time()
 
+    # Pre-processing (dropping/creation of tables)
     print 'Pre-processing ...'
-    # Pre-processing
     if pre != '':
         cur.execute(pre)
         conn.commit()
     print 'Pre-processing took {} seconds'.format(time.time() - start_time)
 
+    # Handle content of the table
     start_time = time.time()
     print 'Processing row in badges ...'
     for rows in Processor.batch(Processor.parse(xml), 50):
-        # Handle
         values = ',\n'.join(
                     [ _createCmdTuple(cur, keys, tmpl, row_attribs)
                         for row_attribs in rows
@@ -60,13 +60,16 @@ def handleTable(table, keys):
             conn.commit()
     print 'Table processing took {} seconds'.format(time.time() - start_time)
 
+    # Post-processing (creation of indexes)
     start_time = time.time()
     print 'Post processing ...'
-    # Post-processing (creation of indexes)
     if post != '':
         cur.execute(post)
         conn.commit()
     print 'Post processing took {} seconds'.format(time.time() - start_time)
+
+    # Clean up
+    cur.close()
     conn.close()
 
 
