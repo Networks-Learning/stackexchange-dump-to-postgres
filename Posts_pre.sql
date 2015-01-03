@@ -8,7 +8,7 @@ CREATE TABLE Posts (
     ViewCount              int                ,
  -- Not storing the body currently
  -- Body                   text not NULL      ,
-    OwnerUserId            int not NULL       ,
+    OwnerUserId            int                ,
     LastEditorUserId       int                ,
     LastEditorDisplayName  text               ,
     LastEditDate           timestamp          ,
