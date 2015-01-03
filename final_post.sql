@@ -24,5 +24,6 @@ INSERT INTO PostTags
 
 CREATE INDEX posttags_postId_idx ON PostTags USING hash (PostId)
        WITH (FILLFACTOR = 100);
-CREATE INDEX posttags_tagId_idx ON PostTags USING hash (TagId)
+-- hash index takes too long to create
+CREATE INDEX posttags_tagId_idx ON PostTags USING btree (TagId)
        WITH (FILLFACTOR = 100);
