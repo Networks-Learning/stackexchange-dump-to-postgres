@@ -10,20 +10,22 @@ This is a quick script to move the Stackoverflow data from the [StackExchange da
 
 ## Usage
 
- - Create the database `stackoverflow` in your database: `CREATE DATABASE stackoverflow`
+ - Create the database `stackoverflow` in your database: `CREATE DATABASE stackoverflow;`
  - Move the following files to the folder from where the program is executed:
    `Badges.xml`, `Votes.xml`, `Posts.xml`, `Users.xml`, `Tags.xml`.
- - Execute in the current:
+ - Execute in the current folder (in parallel, if desired):
    - `python load_into_pg.py Badges`
    - `python load_into_pg.py Posts`
    - `python load_into_pg.py Tags`
    - `python load_into_pg.py Users`
    - `python load_into_pg.py Votes`
+ - Finally, after all the initial tables have been created:
+   - `psql stackoverflow < final_post.sql`
 
-## Caveats and TODO
+## Caveats and TODOs
 
- - It prepares some indexes which may not be necessary
+ - It prepares some indexes which may not be necessary for your analysis.
  - The `body` field in `Posts` table is NOT populated.
  - The database settings are not configurable.
- - In order to create more tables (e.g. other tables at [data.StackExchange](http://data.stackexchange.com/), some additional scripts are needed.
+ - Some tables (e.g. `PostHistory` and `Comments`) are missing.
 
