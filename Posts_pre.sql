@@ -3,6 +3,7 @@ CREATE TABLE Posts (
     Id                     int not NULL       ,
     PostTypeId             int not NULL       ,
     AcceptedAnswerId       int                ,
+    ParentId               int                ,
     CreationDate           timestamp not NULL ,
     Score                  int                ,
     ViewCount              int                ,

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import sys
 import time
 import psycopg2 as pg
@@ -48,14 +49,15 @@ def handleTable(table, keys):
     start_time = time.time()
     print 'Processing data ...'
     for rows in Processor.batch(Processor.parse(xml), 50):
-        values = ',\n'.join(
-                    [ _createCmdTuple(cur, keys, tmpl, row_attribs)
-                        for row_attribs in rows
-                    ]
-                 )
+        valuesStr = ',\n'.join(
+                        [ _createCmdTuple(cur, keys, tmpl, row_attribs)
+                            for row_attribs in rows
+                        ]
+                    )
 
-        if len(values) > 0:
-            cmd = 'INSERT INTO ' + table + ' VALUES\n' + values + ';'
+        if len(valuesStr) > 0:
+            cmd = 'INSERT INTO ' + table + \
+                  ' VALUES\n' + valuesStr + ';'
             cur.execute(cmd)
             conn.commit()
     print 'Table processing took {} seconds'.format(time.time() - start_time)
@@ -92,6 +94,8 @@ else:
           , 'Views'
           , 'UpVotes'
           , 'DownVotes'
+          , 'ProfileImageUrl'
+          , 'Age'
           , 'AccountId'
         ]
     elif table == 'Badges':
@@ -113,6 +117,7 @@ else:
             'Id'
           , 'PostTypeId'
           , 'AcceptedAnswerId'
+          , 'ParentId'
           , 'CreationDate'
           , 'Score'
           , 'ViewCount'
