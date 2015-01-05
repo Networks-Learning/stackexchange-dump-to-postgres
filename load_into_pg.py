@@ -30,8 +30,8 @@ def handleTable(table, keys):
     """Handle the table including the post/pre processing."""
     conn   = pg.connect("dbname=stackoverflow")
     cur    = conn.cursor()
-    pre    = file(table + '_pre.sql').read()
-    post   = file(table + '_post.sql').read()
+    pre    = file('./sql/' + table + '_pre.sql').read()
+    post   = file('./sql/' + table + '_post.sql').read()
 
     xml    = file(table + '.xml')
     tmpl   = _createMogrificationTemplate(keys)

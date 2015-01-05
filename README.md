@@ -20,7 +20,7 @@ This is a quick script to move the Stackoverflow data from the [StackExchange da
    - `python load_into_pg.py Users`
    - `python load_into_pg.py Votes`
  - Finally, after all the initial tables have been created:
-   - `psql stackoverflow < final_post.sql`
+   - `psql stackoverflow < ./sql/final_post.sql`
 
 ## Caveats and TODOs
 
