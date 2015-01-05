@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS Posts;
 CREATE TABLE Posts (
-    Id                     int not NULL       ,
+    Id                     int PRIMARY KEY    ,
     PostTypeId             int not NULL       ,
     AcceptedAnswerId       int                ,
     ParentId               int                ,

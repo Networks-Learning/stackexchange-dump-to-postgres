@@ -5,10 +5,12 @@
 DROP TABLE IF EXISTS PostTags;
 CREATE TABLE PostTags (
     PostId  int not NULL,
-    TagId   int not NULL
+    TagId   int not NULL,
+    PRIMARY KEY (PostId, TagId)
 );
 INSERT INTO PostTags
-  ( SELECT P.Id, Tags.Id
+  -- Some old posts are tagged twice with the same tag
+  ( SELECT DISTINCT P.Id, Tags.Id
     FROM Posts P, LATERAL
         ( SELECT regexp_split_to_table(
                     -- Remove the '</>' from the ends
@@ -33,14 +35,14 @@ CREATE INDEX posttags_tagId_idx ON PostTags USING btree (TagId)
 -- CloseAsOffTopicReasonTypes TABLE
 DROP TABLE IF EXISTS CloseAsOffTopicReasonTypes;
 CREATE TABLE CloseAsOffTopicReasonTypes (
-    Id                      int  NOT NULL ,
-    IsUniversal             bool NOT NULL ,
-    MarkdownMini            text NOT NULL ,
-    CreationDate            timestamp     ,
-    CreationModeratorId     int           ,
-    ApprovalDate            timestamp     ,
-    ApprovalModeratorId     int           ,
-    DeactivationDate        timestamp     ,
+    Id                      int  PRIMARY KEY ,
+    IsUniversal             bool NOT NULL    ,
+    MarkdownMini            text NOT NULL    ,
+    CreationDate            timestamp        ,
+    CreationModeratorId     int              ,
+    ApprovalDate            timestamp        ,
+    ApprovalModeratorId     int              ,
+    DeactivationDate        timestamp        ,
     DeactivationModeratorId int
 );
 INSERT INTO CloseAsOffTopicReasonTypes VALUES
@@ -55,7 +57,7 @@ INSERT INTO CloseAsOffTopicReasonTypes VALUES
 -- PostType TABLE
 DROP TABLE IF EXISTS PostTypes;
 CREATE TABLE PostTypes (
-    Id   int  NOT NULL ,
+    Id   int  PRIMARY KEY ,
     Name text NOT NULL
 );
 INSERT INTO PostTypes VALUES
@@ -71,8 +73,8 @@ INSERT INTO PostTypes VALUES
 -- FlagTypes TABLE
 DROP TABLE IF EXISTS FlagTypes;
 CREATE TABLE FlagTypes (
-    Id            int  NOT NULL ,
-    Name          text NOT NULL ,
+    Id            int  PRIMARY KEY ,
+    Name          text NOT NULL    ,
     Description   text NOT NULL
 );
 INSERT INTO FlagTypes VALUES
@@ -83,7 +85,7 @@ INSERT INTO FlagTypes VALUES
 -- PostHistoryTypes TABLE
 DROP TABLE IF EXISTS PostHistoryTypes;
 CREATE TABLE PostHistoryTypes (
-    Id   int  NOT NULL ,
+    Id   int  PRIMARY KEY,
     Name text NOT NULL
 );
 INSERT INTO PostHistoryTypes VALUES
@@ -121,8 +123,8 @@ INSERT INTO PostHistoryTypes VALUES
 -- CloseReasonTypes TABLE
 DROP TABLE IF EXISTS CloseReasonTypes;
 CREATE TABLE CloseReasonTypes (
-    Id          int  NOT NULL ,
-    Name        text NOT NULL ,
+    Id          int  PRIMARY KEY,
+    Name        text NOT NULL   ,
     Description text
 );
 INSERT INTO CloseReasonTypes VALUES
@@ -143,7 +145,7 @@ INSERT INTO CloseReasonTypes VALUES
 -- VoteType TABLE
 DROP TABLE IF EXISTS VoteTypes;
 CREATE TABLE VoteTypes (
-     Id     int,
+     Id     int PRIMARY KEY,
      Name   text
 );
 INSERT INTO VoteTypes VALUES
@@ -165,8 +167,8 @@ INSERT INTO VoteTypes VALUES
 -- ReviewTaskTypes TABLE
 DROP TABLE IF EXISTS ReviewTaskTypes;
 CREATE TABLE ReviewTaskTypes (
-    Id            int  ,
-    Name          text ,
+    Id            int  PRIMARY KEY,
+    Name          text            ,
     Description   text
 );
 INSERT INTO ReviewTaskTypes VALUES
@@ -184,8 +186,8 @@ INSERT INTO ReviewTaskTypes VALUES
 -- ReviewTaskResultType TABLE
 DROP TABLE IF EXISTS ReviewTaskResultType;
 CREATE TABLE ReviewTaskResultType (
-    Id            int  ,
-    Name          text ,
+    Id            int  PRIMARY KEY ,
+    Name          text             ,
     Description   text
 );
 INSERT INTO ReviewTaskResultType VALUES
