@@ -110,7 +110,9 @@ else:
             'Id'
           , 'PostId'
           , 'VoteTypeId'
+          , 'UserId'
           , 'CreationDate'
+          , 'BountyAmount'
         ]
     elif table == 'Posts':
         keys = [
