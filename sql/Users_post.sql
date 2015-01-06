@@ -1,5 +1,3 @@
-CREATE INDEX user_id_idx ON Users USING hash (Id)
-       WITH (FILLFACTOR = 100);
 CREATE INDEX user_acc_id_idx ON Users USING hash (AccountId)
        WITH (FILLFACTOR = 100);
 CREATE INDEX user_display_idx ON Users USING hash (DisplayName)

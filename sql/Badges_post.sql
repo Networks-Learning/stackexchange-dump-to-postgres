@@ -1,5 +1,3 @@
-CREATE INDEX badges_id_idx on Badges USING hash (Id)
-       WITH (FILLFACTOR = 100);
 -- The hash index is too slow to create
 CREATE INDEX badges_user_id_idx on Badges USING btree (UserId)
        WITH (FILLFACTOR = 100);

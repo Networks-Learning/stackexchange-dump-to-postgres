@@ -22,7 +22,6 @@ INSERT INTO PostTags
         JOIN Tags
         ON Tags.TagName = PostTag.TagName
   );
-
 CREATE INDEX posttags_postId_idx ON PostTags USING hash (PostId)
        WITH (FILLFACTOR = 100);
 -- hash index takes too long to create
