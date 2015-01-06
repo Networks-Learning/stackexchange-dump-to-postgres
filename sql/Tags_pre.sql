@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Tags;
+DROP TABLE IF EXISTS Tags CASCADE;
 CREATE TABLE Tags (
     Id                    int  PRIMARY KEY ,
     TagName               text not NULL    ,

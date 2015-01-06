@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Posts;
+DROP TABLE IF EXISTS Posts CASCADE;
 CREATE TABLE Posts (
     Id                     int PRIMARY KEY    ,
     PostTypeId             int not NULL       ,

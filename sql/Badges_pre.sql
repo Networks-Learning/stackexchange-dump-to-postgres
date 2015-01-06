@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Badges;
+DROP TABLE IF EXISTS Badges CASCADE;
 CREATE TABLE Badges (
    Id                int         PRIMARY KEY ,
    UserId            int         not NULL    ,

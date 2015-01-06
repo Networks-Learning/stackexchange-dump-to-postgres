@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Users CASCADE;
 CREATE TABLE Users (
    Id                int         PRIMARY KEY ,
    Reputation        int         not NULL    ,

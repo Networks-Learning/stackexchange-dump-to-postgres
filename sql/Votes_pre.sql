@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS Votes;
+DROP TABLE IF EXISTS Votes CASCADE;
 CREATE TABLE Votes (
    Id                int         PRIMARY KEY ,
    PostId            int         not NULL    ,
