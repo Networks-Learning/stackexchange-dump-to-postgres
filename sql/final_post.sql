@@ -141,7 +141,7 @@ INSERT INTO CloseReasonTypes VALUES
   ( 105, 'primarily opinion-based', NULL );
 
 
--- VoteType TABLE
+-- VoteTypes TABLE
 DROP TABLE IF EXISTS VoteTypes;
 CREATE TABLE VoteTypes (
      Id     int PRIMARY KEY,
@@ -212,6 +212,15 @@ INSERT INTO ReviewTaskResultType VALUES
   ( 20, 'Should Be Improved', 'Questions that would benefit from futher revision by the author or others' ),
   ( 21, 'Unsalvageable', 'Questions that are unsalvagable and should be removed from the site' );
 
+-- PostLinkTypes TABLE
+DROP TABLE IF EXISTS PostLinkTypes;
+CREATE TABLE PostLinkTypes (
+    Id   int  PRIMARY KEY,
+    Name text
+);
+INSERT INTO PostLinkTypes VALUES
+  ( 1, "Linked" ),
+  ( 3, "Duplicate" );
 
 -- Questions VIEW
 DROP VIEW IF EXISTS Questions;
