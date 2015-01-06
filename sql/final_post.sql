@@ -211,3 +211,25 @@ INSERT INTO ReviewTaskResultType VALUES
   ( 19, 'Reject and Edit', 'Reject the suggested edit and provide a new edit' ),
   ( 20, 'Should Be Improved', 'Questions that would benefit from futher revision by the author or others' ),
   ( 21, 'Unsalvageable', 'Questions that are unsalvagable and should be removed from the site' );
+
+
+-- Questions VIEW
+DROP VIEW IF EXISTS Questions;
+CREATE VIEW Questions AS
+    SELECT Id, AcceptedAnswerId, CreationDate, Score, ViewCount, OwnerUserId,
+           LastEditorUserId, LastEditorDisplayName, LastEditDate,
+           LastActivityDate, Title, Tags, AnswerCount, CommentCount,
+           FavoriteCount, CommunityOwnedDate
+    FROM Posts
+    WHERE PostTypeId = 1;
+
+-- Answers VIEW
+DROP VIEW IF EXISTS Answers;
+CREATE VIEW Answers AS
+    SELECT Id, ParentId, CreationDate, Score, OwnerUserId, LastEditorUserId,
+           LastEditorDisplayName, LastEditDate, LastActivityDate,
+           CommentCount, CommunityOwnedDate
+    FROM Posts
+    WHERE PostTypeId = 2;
+
+
