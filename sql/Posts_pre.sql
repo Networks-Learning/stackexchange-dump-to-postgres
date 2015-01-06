@@ -19,6 +19,7 @@ CREATE TABLE Posts (
     AnswerCount            int                ,
     CommentCount           int                ,
     FavoriteCount          int                ,
+    ClosedDate             timestamp          ,
     CommunityOwnedDate     timestamp
 );
 

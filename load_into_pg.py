@@ -134,6 +134,7 @@ else:
           , 'AnswerCount'
           , 'CommentCount'
           , 'FavoriteCount'
+          , 'ClosedDate'
           , 'CommunityOwnedDate'
         ]
     elif table == 'Tags':
