@@ -48,7 +48,7 @@ def handleTable(table, keys):
     # Handle content of the table
     start_time = time.time()
     print 'Processing data ...'
-    for rows in Processor.batch(Processor.parse(xml), 50):
+    for rows in Processor.batch(Processor.parse(xml), 500):
         valuesStr = ',\n'.join(
                         [ _createCmdTuple(cur, keys, tmpl, row_attribs)
                             for row_attribs in rows

@@ -28,6 +28,6 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
 
  - It prepares some indexes which may not be necessary for your analysis.
  - The `body` field in `Posts` table is NOT populated.
- - The database settings are not configurable.
  - Some tables (e.g. `PostHistory` and `Comments`) are missing.
+ - The database settings are not configurable.
 
