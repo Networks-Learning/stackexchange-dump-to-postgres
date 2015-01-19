@@ -31,3 +31,7 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
  - The `emailhash` field in `Users` table is NOT populated.
  - Some tables (e.g. `PostHistory` and `Comments`) are missing.
 
+### Sept 2011 data dump
+
+ - The `tags.xml` is missing from the data dump. Hence, the `PostTag` and `UserTagQA` tables will be empty after `final_post.sql`.
+ - The `ViewCount` in `Posts` is sometimes equal to an `empty` value. It is replaced by `NULL` in those cases.

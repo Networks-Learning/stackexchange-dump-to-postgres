@@ -2,6 +2,10 @@
 -- tables to mimic the tables available on data.stackexchange.com
 
 -- The `LATERAL` keyword requires PostgresSQL 9.3
+
+-- The tables here assume the existence of `Tags` table which is absent
+-- from the Sept 2011 database dumps. Hence, the following two tables
+-- will be absent from the database which holds those dumps. See the README.
 DROP TABLE IF EXISTS PostTags;
 CREATE TABLE PostTags (
     PostId  int not NULL,
@@ -27,6 +31,30 @@ CREATE INDEX posttags_postId_idx ON PostTags USING hash (PostId)
 -- hash index takes too long to create
 CREATE INDEX posttags_tagId_idx ON PostTags USING btree (TagId)
        WITH (FILLFACTOR = 100);
+
+
+-- UserTagQA TABLE
+DROP TABLE IF EXISTS UserTagQA;
+CREATE TABLE UserTagQA (
+    UserId      int,
+    TagId       int,
+    Questions   int,
+    Answers     int,
+    PRIMARY KEY (UserId, TagId)
+);
+INSERT INTO UserTagQA
+  ( SELECT P.ownerUserId AS UserId,
+           PT.tagId      AS TagId,
+           sum(CASE P.PostTypeId WHEN 1 THEN 1 ELSE 0 END) AS Questions,
+           sum(CASE P.PostTypeId WHEN 2 THEN 1 ELSE 0 END) AS Answers
+    FROM Posts P JOIN PostTags PT ON PT.PostId = P.Id
+    WHERE P.OwnerUserId IS NOT NULL
+    GROUP BY P.OwnerUserId, PT.TagId
+  );
+CREATE INDEX usertagqa_questions_idx ON UserTagQA USING btree (Questions)
+    WITH (FILLFACTOR = 100);
+CREATE INDEX usertagqa_answers_idx ON UserTagQA USING btree (Answers)
+    WITH (FILLFACTOR = 100);
 
 
 -- Tables containing static values
@@ -240,29 +268,5 @@ CREATE VIEW Answers AS
            CommentCount, CommunityOwnedDate
     FROM Posts
     WHERE PostTypeId = 2;
-
-
--- UserTagQA TABLE
-DROP TABLE IF EXISTS UserTagQA;
-CREATE TABLE UserTagQA (
-    UserId      int,
-    TagId       int,
-    Questions   int,
-    Answers     int,
-    PRIMARY KEY (UserId, TagId)
-);
-INSERT INTO UserTagQA
-  ( SELECT P.ownerUserId AS UserId,
-           PT.tagId      AS TagId,
-           sum(CASE P.PostTypeId WHEN 1 THEN 1 ELSE 0 END) AS Questions,
-           sum(CASE P.PostTypeId WHEN 2 THEN 1 ELSE 0 END) AS Answers
-    FROM Posts P JOIN PostTags PT ON PT.PostId = P.Id
-    WHERE P.OwnerUserId IS NOT NULL
-    GROUP BY P.OwnerUserId, PT.TagId
-  );
-CREATE INDEX usertagqa_questions_idx ON UserTagQA USING btree (Questions)
-    WITH (FILLFACTOR = 100);
-CREATE INDEX usertagqa_answers_idx ON UserTagQA USING btree (Answers)
-    WITH (FILLFACTOR = 100);
 
 
