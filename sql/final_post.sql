@@ -219,8 +219,8 @@ CREATE TABLE PostLinkTypes (
     Name text
 );
 INSERT INTO PostLinkTypes VALUES
-  ( 1, "Linked" ),
-  ( 3, "Duplicate" );
+  ( 1, 'Linked' ),
+  ( 3, 'Duplicate' );
 
 -- Questions VIEW
 DROP VIEW IF EXISTS Questions;
