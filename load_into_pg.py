@@ -5,13 +5,24 @@ import argparse
 import psycopg2 as pg
 import row_processor as Processor
 
+# Special rules needed for certain tables (esp. for old database dumps)
+specialRules = {
+    ('Posts', 'ViewCount'): "NULLIF(%(ViewCount)s, '')::int"
+}
+
 def _makeDefValues(keys):
     """Returns a dictionary containing None for all keys."""
     return dict(( (k, None) for k in keys ))
 
-def _createMogrificationTemplate(keys):
+def _createMogrificationTemplate(table, keys):
     """Return the template string for mogrification for the given keys."""
-    return '(' + ', '.join( [ '%(' + k + ')s' for k in keys ] ) + ')'
+    return ( '(' +
+             ', '.join( [ '%(' + k + ')s' if (table, k) not in specialRules else specialRules[table, k]
+                          for k in keys
+                        ]
+                      ) +
+             ')'
+           )
 
 def _createCmdTuple(cursor, keys, templ, attribs):
     """Use the cursor to mogrify a tuple of data.
@@ -27,7 +38,7 @@ def _createCmdTuple(cursor, keys, templ, attribs):
 def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPassword):
     """Handle the table including the post/pre processing."""
     dbFile     = mbDbFile if mbDbFile is not None else table + '.xml'
-    tmpl       = _createMogrificationTemplate(keys)
+    tmpl       = _createMogrificationTemplate(table, keys)
     start_time = time.time()
 
     try:

@@ -13,16 +13,21 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
 ## Usage
 
  - Create the database `stackoverflow` in your database: `CREATE DATABASE stackoverflow;`
+   - You can use a custom database name as well. Make sure to explicitly give
+     it while executing the script later.
  - Move the following files to the folder from where the program is executed:
    `Badges.xml`, `Votes.xml`, `Posts.xml`, `Users.xml`, `Tags.xml`.
+   - In some old dumps, the cases in the filenames are different.
  - Execute in the current folder (in parallel, if desired):
    - `python load_into_pg.py Badges`
    - `python load_into_pg.py Posts`
-   - `python load_into_pg.py Tags` (only present in later dumps)
+   - `python load_into_pg.py Tags` (not present in earliest dumps)
    - `python load_into_pg.py Users`
    - `python load_into_pg.py Votes`
  - Finally, after all the initial tables have been created:
    - `psql stackoverflow < ./sql/final_post.sql`
+   - If you used a different database name, make sure to use that instead of
+     `stackoverflow` while executing this step.
 
 ## Caveats and TODOs
 
