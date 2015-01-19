@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 import sys
 import time
+import argparse
 import psycopg2 as pg
 import row_processor as Processor
 
 def show_help():
-    print "Usage: " + sys.argv[0] + " <Users|Badges|Posts|Tags|Votes> "
+    print "Usage: " + sys.argv[0] + " <Users|Badges|Posts|Tags|Votes> [XML data-file]"
 
 def _makeDefValues(keys):
     """Returns a dictionary containing None for all keys."""
@@ -26,133 +27,196 @@ def _createCmdTuple(cursor, keys, templ, attribs):
     defs.update(attribs)
     return cursor.mogrify(templ, defs)
 
-def handleTable(table, keys):
+def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPassword):
     """Handle the table including the post/pre processing."""
-    conn   = pg.connect("dbname=stackoverflow")
-    cur    = conn.cursor()
-    pre    = file('./sql/' + table + '_pre.sql').read()
-    post   = file('./sql/' + table + '_post.sql').read()
-
-    xml    = file(table + '.xml')
-    tmpl   = _createMogrificationTemplate(keys)
-
+    dbFile     = mbDbFile if mbDbFile is not None else table + '.xml'
+    tmpl       = _createMogrificationTemplate(keys)
     start_time = time.time()
 
-    # Pre-processing (dropping/creation of tables)
-    print 'Pre-processing ...'
-    if pre != '':
-        cur.execute(pre)
-        conn.commit()
-    print 'Pre-processing took {} seconds'.format(time.time() - start_time)
+    try:
+        pre    = file('./sql/' + table + '_pre.sql').read()
+        post   = file('./sql/' + table + '_post.sql').read()
+    except IOError as e:
+        print >> sys.stderr, "Could not load pre/post sql. Are you running from the correct path?"
+        sys.exit(-1)
 
-    # Handle content of the table
-    start_time = time.time()
-    print 'Processing data ...'
-    for rows in Processor.batch(Processor.parse(xml), 500):
-        valuesStr = ',\n'.join(
-                        [ _createCmdTuple(cur, keys, tmpl, row_attribs)
-                            for row_attribs in rows
-                        ]
-                    )
+    dbConnectionParam = "dbname={}".format(dbname)
 
-        if len(valuesStr) > 0:
-            cmd = 'INSERT INTO ' + table + \
-                  ' VALUES\n' + valuesStr + ';'
-            cur.execute(cmd)
-            conn.commit()
-    print 'Table processing took {} seconds'.format(time.time() - start_time)
+    if mbPort is not None:
+        dbConnectionParam += ' port={}'.format(mbPort)
 
-    # Post-processing (creation of indexes)
-    start_time = time.time()
-    print 'Post processing ...'
-    if post != '':
-        cur.execute(post)
-        conn.commit()
-    print 'Post processing took {} seconds'.format(time.time() - start_time)
+    if mbHost is not None:
+        dbConnectionParam += ' host={}'.format(mbHost)
 
-    # Clean up
-    cur.close()
-    conn.close()
+    # TODO Is the escaping done here correct?
+    if mbUsername is not None:
+        dbConnectionParam += ' username={}'.format(mbUsername)
+
+    # TODO Is the escaping done here correct?
+    if mbPassword is not None:
+        dbConnectionParam += ' password={}'.format(mbPassword)
+
+    try:
+        with pg.connect(dbConnectionParam) as conn:
+            with conn.cursor() as cur:
+                try:
+                    with open(dbFile) as xml:
+                        # Pre-processing (dropping/creation of tables)
+                        print 'Pre-processing ...'
+                        if pre != '':
+                            cur.execute(pre)
+                            conn.commit()
+                        print 'Pre-processing took {} seconds'.format(time.time() - start_time)
+
+                        # Handle content of the table
+                        start_time = time.time()
+                        print 'Processing data ...'
+                        for rows in Processor.batch(Processor.parse(xml), 500):
+                            valuesStr = ',\n'.join(
+                                            [ _createCmdTuple(cur, keys, tmpl, row_attribs)
+                                                for row_attribs in rows
+                                            ]
+                                        )
+
+                            if len(valuesStr) > 0:
+                                cmd = 'INSERT INTO ' + table + \
+                                      ' VALUES\n' + valuesStr + ';'
+                                cur.execute(cmd)
+                                conn.commit()
+                        print 'Table processing took {} seconds'.format(time.time() - start_time)
+
+                        # Post-processing (creation of indexes)
+                        start_time = time.time()
+                        print 'Post processing ...'
+                        if post != '':
+                            cur.execute(post)
+                            conn.commit()
+                        print 'Post processing took {} seconds'.format(time.time() - start_time)
+
+                except IOError as e:
+                    print >> sys.stderr, "Could not read from file {}.".format(dbFile)
+                    print >> sys.stderr, "IOError ({0}): {1}".format(e.errorno, e.strerror)
+    except pg.Error as e:
+        print >> sys.stderr, "Error in dealing with the database."
+        print >> sys.stderr, "pg.Error ({0}): {1}".format(e.pgcode, e.pgerror)
+    except pg.Warning as w:
+        print >> sys.stderr, "Warning from the database."
+        print >> sys.stderr, "pg.Warning ({0}): ".format(str(w))
 
 
-if len(sys.argv) < 2:
-    show_help()
+
+#############################################################
+
+parser = argparse.ArgumentParser()
+parser.add_argument( 'table'
+                   , help    = 'The table to work on.'
+                   , choices = ['Users', 'Badges', 'Posts', 'Tags', 'Votes']
+                   )
+
+parser.add_argument( '-d', '--dbname'
+                   , help    = 'Name of database to create the table in. The database must exist.'
+                   , default = 'stackoverflow'
+                   )
+
+parser.add_argument( '-f', '--file'
+                   , help    = 'Name of the file to extract data from.'
+                   , default = None
+                   )
+
+parser.add_argument( '-u', '--username'
+                   , help    = 'Username for the database.'
+                   , default = None
+                   )
+
+parser.add_argument( '-p', '--password'
+                   , help    = 'Password for the database.'
+                   , default = None
+                   )
+
+parser.add_argument( '-P', '--port'
+                   , help    = 'Port to connect with the database on.'
+                   , default = None
+                   )
+
+parser.add_argument( '-H', '--host'
+                   , help    = 'Hostname for the database.'
+                   , default = None
+                   )
+
+args = parser.parse_args()
+
+table = args.table
+keys = None
+
+if table == 'Users':
+    keys = [
+        'Id'
+      , 'Reputation'
+      , 'CreationDate'
+      , 'DisplayName'
+      , 'LastAccessDate'
+      , 'WebsiteUrl'
+      , 'Location'
+      , 'AboutMe'
+      , 'Views'
+      , 'UpVotes'
+      , 'DownVotes'
+      , 'ProfileImageUrl'
+      , 'Age'
+      , 'AccountId'
+    ]
+elif table == 'Badges':
+    keys = [
+        'Id'
+      , 'UserId'
+      , 'Name'
+      , 'Date'
+    ]
+elif table == 'Votes':
+    keys = [
+        'Id'
+      , 'PostId'
+      , 'VoteTypeId'
+      , 'UserId'
+      , 'CreationDate'
+      , 'BountyAmount'
+    ]
+elif table == 'Posts':
+    keys = [
+        'Id'
+      , 'PostTypeId'
+      , 'AcceptedAnswerId'
+      , 'ParentId'
+      , 'CreationDate'
+      , 'Score'
+      , 'ViewCount'
+      # , 'Body'
+      , 'OwnerUserId'
+      , 'LastEditorUserId'
+      , 'LastEditorDisplayName'
+      , 'LastEditDate'
+      , 'LastActivityDate'
+      , 'Title'
+      , 'Tags'
+      , 'AnswerCount'
+      , 'CommentCount'
+      , 'FavoriteCount'
+      , 'ClosedDate'
+      , 'CommunityOwnedDate'
+    ]
+elif table == 'Tags':
+    keys = [
+        'Id'
+      , 'TagName'
+      , 'Count'
+      , 'ExcerptPostId'
+      , 'WikiPostId'
+    ]
+
+choice = raw_input('This will drop the {} table. Are you sure [y/n]?'.format(table))
+
+if len(choice) > 0 and choice[0].lower() == 'y':
+    handleTable(table, keys, args.dbname, args.file, args.host, args.port, args.username, args.password)
 else:
-    table = sys.argv[1]
-    keys = None
-
-    if table == 'Users':
-        keys = [
-            'Id'
-          , 'Reputation'
-          , 'CreationDate'
-          , 'DisplayName'
-          , 'LastAccessDate'
-          , 'WebsiteUrl'
-          , 'Location'
-          , 'AboutMe'
-          , 'Views'
-          , 'UpVotes'
-          , 'DownVotes'
-          , 'ProfileImageUrl'
-          , 'Age'
-          , 'AccountId'
-        ]
-    elif table == 'Badges':
-        keys = [
-            'Id'
-          , 'UserId'
-          , 'Name'
-          , 'Date'
-        ]
-    elif table == 'Votes':
-        keys = [
-            'Id'
-          , 'PostId'
-          , 'VoteTypeId'
-          , 'UserId'
-          , 'CreationDate'
-          , 'BountyAmount'
-        ]
-    elif table == 'Posts':
-        keys = [
-            'Id'
-          , 'PostTypeId'
-          , 'AcceptedAnswerId'
-          , 'ParentId'
-          , 'CreationDate'
-          , 'Score'
-          , 'ViewCount'
-          # , 'Body'
-          , 'OwnerUserId'
-          , 'LastEditorUserId'
-          , 'LastEditorDisplayName'
-          , 'LastEditDate'
-          , 'LastActivityDate'
-          , 'Title'
-          , 'Tags'
-          , 'AnswerCount'
-          , 'CommentCount'
-          , 'FavoriteCount'
-          , 'ClosedDate'
-          , 'CommunityOwnedDate'
-        ]
-    elif table == 'Tags':
-        keys = [
-            'Id'
-          , 'TagName'
-          , 'Count'
-          , 'ExcerptPostId'
-          , 'WikiPostId'
-        ]
-
-    if keys is None:
-        show_help()
-    else:
-        choice = raw_input('This will drop the {} table. Are you sure [y/n]?'.format(table))
-
-        if len(choice) > 0 and choice[0].lower() == 'y':
-            handleTable(table, keys)
-        else:
-            print "Cancelled"
+    print "Cancelled."
 

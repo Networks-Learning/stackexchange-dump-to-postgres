@@ -18,7 +18,7 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
  - Execute in the current folder (in parallel, if desired):
    - `python load_into_pg.py Badges`
    - `python load_into_pg.py Posts`
-   - `python load_into_pg.py Tags`
+   - `python load_into_pg.py Tags` (only present in later dumps)
    - `python load_into_pg.py Users`
    - `python load_into_pg.py Votes`
  - Finally, after all the initial tables have been created:
@@ -26,8 +26,8 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
 
 ## Caveats and TODOs
 
- - It prepares some indexes which may not be necessary for your analysis.
+ - It prepares some indexes and views which may not be necessary for your analysis.
  - The `body` field in `Posts` table is NOT populated.
+ - The `emailhash` field in `Users` table is NOT populated.
  - Some tables (e.g. `PostHistory` and `Comments`) are missing.
- - The database settings are not configurable.
 
