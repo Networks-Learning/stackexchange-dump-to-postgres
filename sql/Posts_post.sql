@@ -19,3 +19,5 @@ CREATE INDEX posts_id_post_type_id_idx on Posts USING btree (Id, PostTypeId)
        WITH (FILLFACTOR = 100);
 CREATE INDEX posts_id_parent_id_idx on Posts USING btree (Id, ParentId)
        WITH (FILLFACTOR = 100);
+CREATE INDEX posts_id_accepted_answers_id_idx on Posts USING btree (Id, AcceptedAnswerId)
+       WITH (FILLFACTOR = 100);
