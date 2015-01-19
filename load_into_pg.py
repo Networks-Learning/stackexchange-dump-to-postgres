@@ -5,9 +5,6 @@ import argparse
 import psycopg2 as pg
 import row_processor as Processor
 
-def show_help():
-    print "Usage: " + sys.argv[0] + " <Users|Badges|Posts|Tags|Votes> [XML data-file]"
-
 def _makeDefValues(keys):
     """Returns a dictionary containing None for all keys."""
     return dict(( (k, None) for k in keys ))
