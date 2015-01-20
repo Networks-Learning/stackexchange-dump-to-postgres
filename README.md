@@ -28,12 +28,15 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
    - `psql stackoverflow < ./sql/final_post.sql`
    - If you used a different database name, make sure to use that instead of
      `stackoverflow` while executing this step.
+ - For some additional indexes and tables, you can also execute the the following;
+   - `psql stackoverflow < ./sql/optional_post.sql`
+   - Again, remember to user the correct database name here, if not `stackoverflow`.
 
 ## Caveats and TODOs
 
  - It prepares some indexes and views which may not be necessary for your analysis.
- - The `body` field in `Posts` table is NOT populated.
- - The `emailhash` field in `Users` table is NOT populated.
+ - The `Body` field in `Posts` table is NOT populated.
+ - The `EmailHash` field in `Users` table is NOT populated.
  - Some tables (e.g. `PostHistory` and `Comments`) are missing.
 
 ### Sept 2011 data dump

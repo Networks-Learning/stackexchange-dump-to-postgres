@@ -16,12 +16,3 @@ CREATE INDEX posts_favorite_count_idx ON Posts USING btree (FavoriteCount)
 CREATE INDEX posts_viewcount_idx ON Posts USING btree (ViewCount)
        WITH (FILLFACTOR = 100);
 
--- Composite indexes (optional)
-CREATE INDEX posts_id_post_type_id_idx ON Posts USING btree (Id, PostTypeId)
-       WITH (FILLFACTOR = 100);
-CREATE INDEX posts_id_parent_id_idx ON Posts USING btree (Id, ParentId)
-       WITH (FILLFACTOR = 100);
-CREATE INDEX posts_id_accepted_answers_id_idx ON Posts USING btree (Id, AcceptedAnswerId)
-       WITH (FILLFACTOR = 100);
-CREATE INDEX posts_owner_user_id_creation_date_idx ON Posts USING btree (OwnerUserId, CreationDate)
-       WITH (FILLFACTOR = 100);

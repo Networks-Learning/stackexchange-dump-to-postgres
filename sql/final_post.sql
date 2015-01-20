@@ -33,30 +33,6 @@ CREATE INDEX posttags_tagId_idx ON PostTags USING btree (TagId)
        WITH (FILLFACTOR = 100);
 
 
--- UserTagQA TABLE
-DROP TABLE IF EXISTS UserTagQA;
-CREATE TABLE UserTagQA (
-    UserId      int,
-    TagId       int,
-    Questions   int,
-    Answers     int,
-    PRIMARY KEY (UserId, TagId)
-);
-INSERT INTO UserTagQA
-  ( SELECT P.ownerUserId AS UserId,
-           PT.tagId      AS TagId,
-           sum(CASE P.PostTypeId WHEN 1 THEN 1 ELSE 0 END) AS Questions,
-           sum(CASE P.PostTypeId WHEN 2 THEN 1 ELSE 0 END) AS Answers
-    FROM Posts P JOIN PostTags PT ON PT.PostId = P.Id
-    WHERE P.OwnerUserId IS NOT NULL
-    GROUP BY P.OwnerUserId, PT.TagId
-  );
-CREATE INDEX usertagqa_questions_idx ON UserTagQA USING btree (Questions)
-    WITH (FILLFACTOR = 100);
-CREATE INDEX usertagqa_answers_idx ON UserTagQA USING btree (Answers)
-    WITH (FILLFACTOR = 100);
-
-
 -- Tables containing static values
 
 -- CloseAsOffTopicReasonTypes TABLE
@@ -249,24 +225,5 @@ CREATE TABLE PostLinkTypes (
 INSERT INTO PostLinkTypes VALUES
   ( 1, 'Linked' ),
   ( 3, 'Duplicate' );
-
--- Questions VIEW
-DROP VIEW IF EXISTS Questions;
-CREATE VIEW Questions AS
-    SELECT Id, AcceptedAnswerId, CreationDate, Score, ViewCount, OwnerUserId,
-           LastEditorUserId, LastEditorDisplayName, LastEditDate,
-           LastActivityDate, Title, Tags, AnswerCount, CommentCount,
-           FavoriteCount, CommunityOwnedDate
-    FROM Posts
-    WHERE PostTypeId = 1;
-
--- Answers VIEW
-DROP VIEW IF EXISTS Answers;
-CREATE VIEW Answers AS
-    SELECT Id, ParentId, CreationDate, Score, OwnerUserId, LastEditorUserId,
-           LastEditorDisplayName, LastEditDate, LastActivityDate,
-           CommentCount, CommunityOwnedDate
-    FROM Posts
-    WHERE PostTypeId = 2;
 
 
