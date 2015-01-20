@@ -1,6 +1,7 @@
 -- These are the optional post processing tasks which may be performed.
 
 -- UserTagQA TABLE
+-- How many Questions and Answers has the user posted under a given tag.
 DROP TABLE IF EXISTS UserTagQA;
 CREATE TABLE UserTagQA (
     UserId      int,
@@ -12,15 +13,17 @@ CREATE TABLE UserTagQA (
 INSERT INTO UserTagQA
   ( SELECT P.ownerUserId AS UserId,
            PT.tagId      AS TagId,
-           sum(CASE P.PostTypeId WHEN 1 THEN 1 ELSE 0 END) AS Questions,
-           sum(CASE P.PostTypeId WHEN 2 THEN 1 ELSE 0 END) AS Answers
-    FROM Posts P JOIN PostTags PT ON PT.PostId = P.Id
+           SUM(CASE P.PostTypeId WHEN 1 THEN 1 ELSE 0 END) AS Questions,
+           SUM(CASE P.PostTypeId WHEN 2 THEN 1 ELSE 0 END) AS Answers
+    FROM Posts P JOIN PostTags PT ON (PT.PostId = P.Id OR PT.PostId = P.ParentId)
     WHERE P.OwnerUserId IS NOT NULL
     GROUP BY P.OwnerUserId, PT.TagId
   );
 CREATE INDEX usertagqa_questions_idx ON UserTagQA USING btree (Questions)
     WITH (FILLFACTOR = 100);
 CREATE INDEX usertagqa_answers_idx ON UserTagQA USING btree (Answers)
+    WITH (FILLFACTOR = 100);
+CREATE INDEX usertagqa_questions_answers_idx ON UserTagQA USING btree (Questions, Answers)
     WITH (FILLFACTOR = 100);
 
 
