@@ -39,6 +39,23 @@ INSERT INTO QuestionAnswer
     FROM Posts P WHERE P.PostTypeId = 2
   );
 
+-- AllPostTags TABLE
+DROP TABLE IF EXISTS AllPostTags;
+CREATE TABLE AllPostTags (
+    PostId int,
+    TagId  int,
+    PRIMARY KEY (PostId, TagId)
+);
+INSERT INTO AllPostTags
+  -- DISTINCT is needed here because:
+  -- Key (postid, tagid)=(310914, 3) already exists in Sept-2014 data dump.
+  -- Answer 201914 is tagged with `javascript` for some reason.
+  ( SELECT DISTINCT P.Id, PT.TagId
+    FROM Posts P JOIN PostTags PT
+         ON (PT.PostId = P.Id OR PT.PostId = P.ParentId)
+  );
+
+
 -- Questions VIEW
 DROP VIEW IF EXISTS Questions;
 CREATE VIEW Questions AS
