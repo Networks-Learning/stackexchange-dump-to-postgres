@@ -25,6 +25,8 @@ CREATE INDEX usertagqa_answers_idx ON UserTagQA USING btree (Answers)
     WITH (FILLFACTOR = 100);
 CREATE INDEX usertagqa_questions_answers_idx ON UserTagQA USING btree (Questions, Answers)
     WITH (FILLFACTOR = 100);
+CREATE INDEX usertagqa_all_qa_posts_idx ON UserTagQA USING btree ((Questions + Answers))
+    WITH (FILLFACTOR = 100);
 
 
 -- QuestionAnswer TABLE
