@@ -58,7 +58,7 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
 
     # TODO Is the escaping done here correct?
     if mbUsername is not None:
-        dbConnectionParam += ' username={}'.format(mbUsername)
+        dbConnectionParam += ' user={}'.format(mbUsername)
 
     # TODO Is the escaping done here correct?
     if mbPassword is not None:
