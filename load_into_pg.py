@@ -151,6 +151,12 @@ parser.add_argument( '-H', '--host'
                    , default = None
                    )
 
+parser.add_argument( '--with-post-body'
+                   , help   = 'Import the posts with the post body. Only used if importing Posts.xml'
+                   , action = 'store_true'
+                   , default = False
+                   )
+
 args = parser.parse_args()
 
 table = args.table
@@ -212,6 +218,10 @@ elif table == 'Posts':
       , 'ClosedDate'
       , 'CommunityOwnedDate'
     ]
+
+    if args.with_post_body:
+        keys.append('Body')
+
 elif table == 'Tags':
     keys = [
         'Id'
