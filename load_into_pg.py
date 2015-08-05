@@ -107,9 +107,10 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
     except pg.Error as e:
         print >> sys.stderr, "Error in dealing with the database."
         print >> sys.stderr, "pg.Error ({0}): {1}".format(e.pgcode, e.pgerror)
+        print >> sys.stderr, str(e)
     except pg.Warning as w:
         print >> sys.stderr, "Warning from the database."
-        print >> sys.stderr, "pg.Warning ({0}): ".format(str(w))
+        print >> sys.stderr, "pg.Warning: {0}".format(str(w))
 
 
 
