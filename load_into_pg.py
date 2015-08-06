@@ -103,7 +103,7 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
 
                 except IOError as e:
                     print >> sys.stderr, "Could not read from file {}.".format(dbFile)
-                    print >> sys.stderr, "IOError ({0}): {1}".format(e.errorno, e.strerror)
+                    print >> sys.stderr, "IOError: {0}".format(e.strerror)
     except pg.Error as e:
         print >> sys.stderr, "Error in dealing with the database."
         print >> sys.stderr, "pg.Error ({0}): {1}".format(e.pgcode, e.pgerror)
