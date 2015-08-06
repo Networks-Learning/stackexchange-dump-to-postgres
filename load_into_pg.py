@@ -205,7 +205,7 @@ elif table == 'Posts':
       , 'CreationDate'
       , 'Score'
       , 'ViewCount'
-      # , 'Body'
+      , 'Body'
       , 'OwnerUserId'
       , 'LastEditorUserId'
       , 'LastEditorDisplayName'
@@ -220,8 +220,9 @@ elif table == 'Posts':
       , 'CommunityOwnedDate'
     ]
 
-    if args.with_post_body:
-        keys.append('Body')
+    # If the user has not explicitly asked for loading the body, we replace it with NULL
+    if not args.with_post_body:
+        specialRules[('Posts', 'Body')] = 'NULL'
 
 elif table == 'Tags':
     keys = [

@@ -7,8 +7,7 @@ CREATE TABLE Posts (
     CreationDate           timestamp not NULL ,
     Score                  int                ,
     ViewCount              int                ,
- -- Not storing the body currently
- -- Body                   text not NULL      ,
+    Body                   text               ,
     OwnerUserId            int                ,
     LastEditorUserId       int                ,
     LastEditorDisplayName  text               ,
