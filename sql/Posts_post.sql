@@ -17,3 +17,5 @@ CREATE INDEX posts_viewcount_idx ON Posts USING btree (ViewCount)
        WITH (FILLFACTOR = 100);
 CREATE INDEX posts_accepted_answer_id_idx ON Posts USING btree (AcceptedAnswerId)
        WITH (FILLFACTOR = 100);
+CREATE INDEX posts_parent_id_idx ON Posts USING btree (ParentId)
+       WITH (FILLFACTOR = 100);
