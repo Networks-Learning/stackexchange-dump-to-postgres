@@ -24,6 +24,8 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
    - `python load_into_pg.py Tags` (not present in earliest dumps)
    - `python load_into_pg.py Users`
    - `python load_into_pg.py Votes`
+   - `python load_into_pg.py PostLinks`
+   - `python load_into_pg.py Comments`
  - Finally, after all the initial tables have been created:
    - `psql stackoverflow < ./sql/final_post.sql`
    - If you used a different database name, make sure to use that instead of
@@ -37,7 +39,7 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
  - It prepares some indexes and views which may not be necessary for your analysis.
  - The `Body` field in `Posts` table is NOT populated by default. You have to use `--with-post-body` argument to include it.
  - The `EmailHash` field in `Users` table is NOT populated.
- - Some tables (e.g. `PostHistory` and `Comments`) are missing.
+ - Some tables (e.g. `PostHistory`) are missing.
 
 ### Sept 2011 data dump
 

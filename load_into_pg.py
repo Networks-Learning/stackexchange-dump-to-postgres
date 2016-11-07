@@ -119,7 +119,7 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
 parser = argparse.ArgumentParser()
 parser.add_argument( 'table'
                    , help    = 'The table to work on.'
-                   , choices = ['Users', 'Badges', 'Posts', 'Tags', 'Votes']
+                   , choices = ['Users', 'Badges', 'Posts', 'Tags', 'Votes','PostLinks','Comments']
                    )
 
 parser.add_argument( '-d', '--dbname'
@@ -186,6 +186,23 @@ elif table == 'Badges':
       , 'UserId'
       , 'Name'
       , 'Date'
+    ]
+elif table == 'PostLinks':
+    keys = [
+        'Id'
+      , 'CreationDate'
+      , 'PostId'
+      , 'RelatedPostId'
+      , 'LinkTypeId'
+    ]
+elif table == 'Comments':
+    keys = [
+        'Id'
+      , 'PostId'
+      , 'Score'
+      , 'Text'
+      , 'CreationDate'
+      , 'UserId'
     ]
 elif table == 'Votes':
     keys = [
