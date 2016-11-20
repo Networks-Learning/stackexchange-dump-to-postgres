@@ -74,7 +74,7 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
                         if pre != '':
                             cur.execute(pre)
                             conn.commit()
-                        print 'Pre-processing took {} seconds'.format(time.time() - start_time)
+                        print 'Pre-processing took {:.1f} seconds'.format(time.time() - start_time)
 
                         # Handle content of the table
                         start_time = time.time()
@@ -91,7 +91,7 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
                                       ' VALUES\n' + valuesStr + ';'
                                 cur.execute(cmd)
                                 conn.commit()
-                        print 'Table processing took {} seconds'.format(time.time() - start_time)
+                        print 'Table processing took {:.1f} seconds'.format(time.time() - start_time)
 
                         # Post-processing (creation of indexes)
                         start_time = time.time()
@@ -119,7 +119,7 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
 parser = argparse.ArgumentParser()
 parser.add_argument( 'table'
                    , help    = 'The table to work on.'
-                   , choices = ['Users', 'Badges', 'Posts', 'Tags', 'Votes']
+                   , choices = ['Users', 'Badges', 'Posts', 'Tags', 'Votes', 'PostHistory', 'Comments']
                    )
 
 parser.add_argument( '-d', '--dbname'
@@ -134,12 +134,12 @@ parser.add_argument( '-f', '--file'
 
 parser.add_argument( '-u', '--username'
                    , help    = 'Username for the database.'
-                   , default = None
+                   , default = 'postgres'
                    )
 
 parser.add_argument( '-p', '--password'
                    , help    = 'Password for the database.'
-                   , default = None
+                   , default = 'fibinse'
                    )
 
 parser.add_argument( '-P', '--port'
@@ -232,7 +232,25 @@ elif table == 'Tags':
       , 'ExcerptPostId'
       , 'WikiPostId'
     ]
-
+elif table == 'PostHistory':
+    keys = [
+        'Id',
+        'PostHistoryTypeId',
+        'PostId',
+        'RevisionGUID',
+        'CreationDate',
+        'UserId',
+        'Text'
+    ]
+elif table == 'Comments':
+    keys = [
+        'Id',
+        'PostId',
+        'Score',
+        'Text',
+        'CreationDate',
+        'UserId',
+    ]
 choice = raw_input('This will drop the {} table. Are you sure [y/n]?'.format(table))
 
 if len(choice) > 0 and choice[0].lower() == 'y':
