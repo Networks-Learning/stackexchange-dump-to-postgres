@@ -40,7 +40,6 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
  - It prepares some indexes and views which may not be necessary for your analysis.
  - The `Body` field in `Posts` table is NOT populated by default. You have to use `--with-post-body` argument to include it.
  - The `EmailHash` field in `Users` table is NOT populated.
- - Some tables (e.g. `PostHistory`) are missing.
 
 ### Sept 2011 data dump
 
