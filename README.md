@@ -25,6 +25,7 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
    - `python load_into_pg.py Users`
    - `python load_into_pg.py Votes`
    - `python load_into_pg.py PostLinks`
+   - `python load_into_pg.py PostHistory`
    - `python load_into_pg.py Comments`
  - Finally, after all the initial tables have been created:
    - `psql stackoverflow < ./sql/final_post.sql`
