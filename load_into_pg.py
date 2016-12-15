@@ -134,12 +134,12 @@ parser.add_argument( '-f', '--file'
 
 parser.add_argument( '-u', '--username'
                    , help    = 'Username for the database.'
-                   , default = 'postgres'
+                   , default = None
                    )
 
 parser.add_argument( '-p', '--password'
                    , help    = 'Password for the database.'
-                   , default = 'fibinse'
+                   , default = None
                    )
 
 parser.add_argument( '-P', '--port'

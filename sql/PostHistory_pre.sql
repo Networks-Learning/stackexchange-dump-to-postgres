@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS Tags CASCADE;
+DROP TABLE IF EXISTS PostHistory CASCADE;
 CREATE TABLE PostHistory (
-    Id                     int  PRIMARY KEY ,
-    PostHistoryTypeId      int,
-    PostId                 int,
-    RevisionGUID 		   text,
-    CreationDate 		   timestamp not NULL ,
-    UserId				   int,
-    PostText			   text
+    Id                 int  PRIMARY KEY   ,
+    PostHistoryTypeId  int                ,
+    PostId             int                ,
+    RevisionGUID       text               ,
+    CreationDate       timestamp not NULL ,
+    UserId             int                ,
+    PostText           text
 );
