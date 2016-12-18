@@ -81,9 +81,38 @@ CREATE TABLE FlagTypes (
     Description   text NOT NULL
 );
 INSERT INTO FlagTypes VALUES
+  ( 1, 'Post Other', 'Custom user-entered text' ),
+  ( 2, 'Post Spam', 'Promotion or advertisement by a company' ),
+  ( 3, 'Post Offensive', 'Offensive, abusive, or hate speech' ),
+  ( 4, 'Post Delete', 'Post should be removed' ),
+  ( 5, 'Post Undelete', 'Post should be restored' ),
+  ( 6, 'Post Low Quality', 'Severe content or formatting issues' ),
+  ( 7, 'ost Low Quality (Auto)', 'Failed low quality algorithms upon creation' ),
+  ( 8, 'Question Consecutive Closures (Auto)', 'User has had multiple questions closed back-to-back' ),
+  ( 9, 'Post Excessively Long (Auto)', 'Post body is much larger than usual' ),
+  ( 10, 'Post Too Many Comments (Auto)', 'Post has more comments than usual' ),
+  ( 11, 'Post Rollback War (Auto)', 'Post is being rolled back more than usual' ),
+  ( 12, 'Post Invalid Flags', 'User is disputing other existing flags on a post' ),
   ( 13, 'Question Recommend Close', 'User without close privileges suggests a question should be closed' ),
   ( 14, 'Question Close', 'User with close privileges is voting to close a question' ),
-  ( 15, 'Question Reopen', 'User with close privileges is voting to reopen a question');
+  ( 15, 'Question Reopen', 'User with close privileges is voting to reopen a question' ),
+  ( 16, 'Question Closed Without Explanatory Comment (Auto)', 'A question on a private/public beta site has been closed without any explanation' ),
+  ( 17, 'Answer Not An Answer', 'An answer is created that does not address the question' ),
+  ( 18, 'Answer Duplicate Answer (Auto)', 'Many of a user''s latest answers are similar/identical' ),
+  ( 19, 'Comment Other', 'Custom user-entered text' ),
+  ( 20, 'Comment Rude Or Offensive', 'Offensive, abusive or hate speech' ),
+  ( 21, 'Comment Not Constructive Or Off Topic', 'Adds nothing to the discussion' ),
+  ( 22, 'Comment Obsolete', 'No longer addresses the question' ),
+  ( 23, 'Comment Too Chatty', 'Verbosity abounds' ),
+  ( 24, 'Post Vandalism Deletions (Auto)', 'Possible vandalism of own posts; multiple deletions in a short time' ),
+  ( 25, 'Post Vandalism Edits (Auto)', 'Possible vandalism of own posts; multiple edits in a short time' ),
+  ( 26, 'Comment Vandalism Deletions (Auto)', 'Possible vandalism of own comments; multiple deletions in a short time' ),
+  ( 27, 'ReviewLowQualityDisputedAuto', 'A contentious review needs moderator attention (auto)' ),
+  ( 28, 'PostExcessiveEditsByOwnerAuto', 'More than 10 edits by the original author (auto)' ),
+  ( 29, 'PostExcessiveEditsByOthersAuto', 'More than 10 users have edited this post (auto)' ),
+  ( 30, 'QuestionExcessiveAnswersPostedRecentlyAuto', 'More than 10 answers posted to this question in the past 7 days (auto)' ),
+  ( 31, 'QuestionExcessiveAnswersPostedForAllTimeAuto', 'More than 30 answers posted to this question (auto)' ),
+  ( 32, 'QuestionContestedDuplicateAuto', 'Identifies close/reopen wars between users with binding votes');
 
 -- PostHistoryTypes TABLE
 DROP TABLE IF EXISTS PostHistoryTypes;
