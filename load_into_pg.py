@@ -42,8 +42,8 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
     start_time = time.time()
 
     try:
-        pre    = file('./sql/' + table + '_pre.sql').read()
-        post   = file('./sql/' + table + '_post.sql').read()
+        pre    = open('./sql/' + table + '_pre.sql').read()
+        post   = open('./sql/' + table + '_post.sql').read()
     except IOError as e:
         print >> sys.stderr, "Could not load pre/post sql. Are you running from the correct path?"
         sys.exit(-1)
@@ -70,15 +70,15 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
                 try:
                     with open(dbFile) as xml:
                         # Pre-processing (dropping/creation of tables)
-                        print 'Pre-processing ...'
+                        print ('Pre-processing ...')
                         if pre != '':
                             cur.execute(pre)
                             conn.commit()
-                        print 'Pre-processing took {:.1f} seconds'.format(time.time() - start_time)
+                        print ('Pre-processing took {:.1f} seconds'.format(time.time() - start_time))
 
                         # Handle content of the table
                         start_time = time.time()
-                        print 'Processing data ...'
+                        print ('Processing data ...')
                         for rows in Processor.batch(Processor.parse(xml), 500):
                             valuesStr = ',\n'.join(
                                             [ _createCmdTuple(cur, keys, tmpl, row_attribs)
@@ -91,26 +91,26 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
                                       ' VALUES\n' + valuesStr + ';'
                                 cur.execute(cmd)
                                 conn.commit()
-                        print 'Table processing took {:.1f} seconds'.format(time.time() - start_time)
+                        print ('Table processing took {:.1f} seconds'.format(time.time() - start_time))
 
                         # Post-processing (creation of indexes)
                         start_time = time.time()
-                        print 'Post processing ...'
+                        print ('Post processing ...')
                         if post != '':
                             cur.execute(post)
                             conn.commit()
-                        print 'Post processing took {} seconds'.format(time.time() - start_time)
+                        print ('Post processing took {} seconds'.format(time.time() - start_time))
 
                 except IOError as e:
-                    print >> sys.stderr, "Could not read from file {}.".format(dbFile)
-                    print >> sys.stderr, "IOError: {0}".format(e.strerror)
+                    print ("Could not read from file {}.".format(dbFile), file=sys.stderr)
+                    print ("IOError: {0}".format(e.strerror), file=sys.stderr)
     except pg.Error as e:
-        print >> sys.stderr, "Error in dealing with the database."
-        print >> sys.stderr, "pg.Error ({0}): {1}".format(e.pgcode, e.pgerror)
-        print >> sys.stderr, str(e)
+        print ("Error in dealing with the database.", file=sys.stderr)
+        print ("pg.Error ({0}): {1}".format(e.pgcode, e.pgerror), file=sys.stderr)
+        print (str(e), file=sys.stderr)
     except pg.Warning as w:
-        print >> sys.stderr, "Warning from the database."
-        print >> sys.stderr, "pg.Warning: {0}".format(str(w))
+        print ("Warning from the database.", file=sys.stderr)
+        print ("pg.Warning: {0}".format(str(w)), file=sys.stderr)
 
 
 
@@ -268,10 +268,10 @@ elif table == 'Comments':
         'CreationDate',
         'UserId',
     ]
-choice = raw_input('This will drop the {} table. Are you sure [y/n]?'.format(table))
+choice = input('This will drop the {} table. Are you sure [y/n]?'.format(table))
 
 if len(choice) > 0 and choice[0].lower() == 'y':
     handleTable(table, keys, args.dbname, args.file, args.host, args.port, args.username, args.password)
 else:
-    print "Cancelled."
+    print ("Cancelled.")
 
