@@ -8,7 +8,6 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
 
  - [`lxml`](http://lxml.de/installation.html)
  - [`psychopg2`](http://initd.org/psycopg/docs/install.html)
- - Python 2.7 compatible
 
 ## Usage
 
