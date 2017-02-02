@@ -1,5 +1,6 @@
 from lxml import etree
 from itertools import islice, chain
+import six
 
 # Efficient parsing of large XML files from
 # http://stackoverflow.com/a/9814580/987185
@@ -31,5 +32,5 @@ def batch(iterable, size):
     sourceiter = iter(iterable)
     while True:
         batchiter = islice(sourceiter, size)
-        yield chain([batchiter.next()], batchiter)
+        yield chain([six.next(batchiter)], batchiter)
 

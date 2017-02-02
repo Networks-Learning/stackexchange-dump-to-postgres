@@ -4,6 +4,7 @@ import time
 import argparse
 import psycopg2 as pg
 import row_processor as Processor
+import six
 
 # Special rules needed for certain tables (esp. for old database dumps)
 specialRules = {
@@ -45,7 +46,7 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
         pre    = open('./sql/' + table + '_pre.sql').read()
         post   = open('./sql/' + table + '_post.sql').read()
     except IOError as e:
-        print >> sys.stderr, "Could not load pre/post sql. Are you running from the correct path?"
+        six.print_("Could not load pre/post sql. Are you running from the correct path?", file=sys.stderr)
         sys.exit(-1)
 
     dbConnectionParam = "dbname={}".format(dbname)
@@ -68,20 +69,20 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
         with pg.connect(dbConnectionParam) as conn:
             with conn.cursor() as cur:
                 try:
-                    with open(dbFile) as xml:
+                    with open(dbFile, 'rb') as xml:
                         # Pre-processing (dropping/creation of tables)
-                        print ('Pre-processing ...')
+                        six.print_('Pre-processing ...')
                         if pre != '':
                             cur.execute(pre)
                             conn.commit()
-                        print ('Pre-processing took {:.1f} seconds'.format(time.time() - start_time))
+                        six.print_('Pre-processing took {:.1f} seconds'.format(time.time() - start_time))
 
                         # Handle content of the table
                         start_time = time.time()
-                        print ('Processing data ...')
+                        six.print_('Processing data ...')
                         for rows in Processor.batch(Processor.parse(xml), 500):
                             valuesStr = ',\n'.join(
-                                            [ _createCmdTuple(cur, keys, tmpl, row_attribs)
+                                            [ _createCmdTuple(cur, keys, tmpl, row_attribs).decode('utf-8')
                                                 for row_attribs in rows
                                             ]
                                         )
@@ -91,26 +92,26 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
                                       ' VALUES\n' + valuesStr + ';'
                                 cur.execute(cmd)
                                 conn.commit()
-                        print ('Table processing took {:.1f} seconds'.format(time.time() - start_time))
+                        six.print_('Table processing took {:.1f} seconds'.format(time.time() - start_time))
 
                         # Post-processing (creation of indexes)
                         start_time = time.time()
-                        print ('Post processing ...')
+                        six.print_('Post processing ...')
                         if post != '':
                             cur.execute(post)
                             conn.commit()
-                        print ('Post processing took {} seconds'.format(time.time() - start_time))
+                        six.print_('Post processing took {} seconds'.format(time.time() - start_time))
 
                 except IOError as e:
-                    print ("Could not read from file {}.".format(dbFile), file=sys.stderr)
-                    print ("IOError: {0}".format(e.strerror), file=sys.stderr)
+                    six.print_("Could not read from file {}.".format(dbFile), file=sys.stderr)
+                    six.print_("IOError: {0}".format(e.strerror), file=sys.stderr)
     except pg.Error as e:
-        print ("Error in dealing with the database.", file=sys.stderr)
-        print ("pg.Error ({0}): {1}".format(e.pgcode, e.pgerror), file=sys.stderr)
-        print (str(e), file=sys.stderr)
+        six.print_("Error in dealing with the database.", file=sys.stderr)
+        six.print_("pg.Error ({0}): {1}".format(e.pgcode, e.pgerror), file=sys.stderr)
+        six.print_(str(e), file=sys.stderr)
     except pg.Warning as w:
-        print ("Warning from the database.", file=sys.stderr)
-        print ("pg.Warning: {0}".format(str(w)), file=sys.stderr)
+        six.print_("Warning from the database.", file=sys.stderr)
+        six.print_("pg.Warning: {0}".format(str(w)), file=sys.stderr)
 
 
 
@@ -268,10 +269,17 @@ elif table == 'Comments':
         'CreationDate',
         'UserId',
     ]
+
+try:
+    # Python 2/3 compatibility
+    input = raw_input
+except NameError:
+    pass
+
 choice = input('This will drop the {} table. Are you sure [y/n]?'.format(table))
 
 if len(choice) > 0 and choice[0].lower() == 'y':
     handleTable(table, keys, args.dbname, args.file, args.host, args.port, args.username, args.password)
 else:
-    print ("Cancelled.")
+    six.print_("Cancelled.")
 
