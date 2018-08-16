@@ -5,6 +5,7 @@ import argparse
 import psycopg2 as pg
 import row_processor as Processor
 import six
+import json
 
 # Special rules needed for certain tables (esp. for old database dumps)
 specialRules = {
@@ -15,17 +16,17 @@ def _makeDefValues(keys):
     """Returns a dictionary containing None for all keys."""
     return dict(( (k, None) for k in keys ))
 
-def _createMogrificationTemplate(table, keys):
+def _createMogrificationTemplate(table, keys, insertJson):
     """Return the template string for mogrification for the given keys."""
-    return ( '(' +
-             ', '.join( [ '%(' + k + ')s' if (table, k) not in specialRules else specialRules[table, k]
-                          for k in keys
-                        ]
-                      ) +
-             ')'
-           )
+    table_keys = ', '.join( [ '%(' + k + ')s' if (table, k) not in specialRules
+                              else specialRules[table, k]
+                              for k in keys ])
+    if insertJson:
+        return ('(' + table_keys + ', %(jsonfield)s' + ')')
+    else:
+        return ('(' + table_keys + ')')
 
-def _createCmdTuple(cursor, keys, templ, attribs):
+def _createCmdTuple(cursor, keys, templ, attribs, insertJson):
     """Use the cursor to mogrify a tuple of data.
     The passed data in `attribs` is augmented with default data (NULLs) and the
     order of data in the tuple is the same as in the list of `keys`. The
@@ -34,12 +35,20 @@ def _createCmdTuple(cursor, keys, templ, attribs):
     """
     defs = _makeDefValues(keys)
     defs.update(attribs)
+
+    if insertJson:
+        dict_attribs = { }
+        for name, value in attribs.items():
+            dict_attribs[name] = value
+        defs['jsonfield'] = json.dumps(dict_attribs)
+
+    values_to_insert = cursor.mogrify(templ, defs)
     return cursor.mogrify(templ, defs)
 
-def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPassword):
+def handleTable(table, keys, insertJson, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPassword):
     """Handle the table including the post/pre processing."""
     dbFile     = mbDbFile if mbDbFile is not None else table + '.xml'
-    tmpl       = _createMogrificationTemplate(table, keys)
+    tmpl       = _createMogrificationTemplate(table, keys, insertJson)
     start_time = time.time()
 
     try:
@@ -82,7 +91,7 @@ def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPas
                         six.print_('Processing data ...')
                         for rows in Processor.batch(Processor.parse(xml), 500):
                             valuesStr = ',\n'.join(
-                                            [ _createCmdTuple(cur, keys, tmpl, row_attribs).decode('utf-8')
+                                            [ _createCmdTuple(cur, keys, tmpl, row_attribs, insertJson).decode('utf-8')
                                                 for row_attribs in rows
                                             ]
                                         )
@@ -159,6 +168,11 @@ parser.add_argument( '--with-post-body'
                    , default = False
                    )
 
+parser.add_argument( '-j', '--insert-json'
+                   , help    = 'Insert raw data as JSON.'
+                   , action = 'store_true'
+                   , default = False
+                   )
 args = parser.parse_args()
 
 table = args.table
@@ -279,7 +293,7 @@ except NameError:
 choice = input('This will drop the {} table. Are you sure [y/n]?'.format(table))
 
 if len(choice) > 0 and choice[0].lower() == 'y':
-    handleTable(table, keys, args.dbname, args.file, args.host, args.port, args.username, args.password)
+    handleTable(table, keys, args.insert_json, args.dbname, args.file, args.host, args.port, args.username, args.password)
 else:
     six.print_("Cancelled.")
 

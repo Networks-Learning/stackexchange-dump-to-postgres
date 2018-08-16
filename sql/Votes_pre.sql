@@ -5,6 +5,7 @@ CREATE TABLE Votes (
    VoteTypeId        int         not NULL    ,
    UserId            int                     ,
    CreationDate      timestamp   not NULL    ,
-   BountyAmount      int
+   BountyAmount      int                     ,
+   jsonfield         jsonb
 );
 

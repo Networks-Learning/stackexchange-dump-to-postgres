@@ -5,5 +5,6 @@ CREATE TABLE Comments (
     Score                  int not NULL       ,
     Text                   text               ,
     CreationDate           timestamp not NULL , 
-    UserId                 int
+    UserId                 int                ,
+    jsonfield              jsonb
 );
