@@ -30,7 +30,7 @@ def _createCmdTuple(cursor, keys, templ, attribs, insertJson):
     """Use the cursor to mogrify a tuple of data.
     The passed data in `attribs` is augmented with default data (NULLs) and the
     order of data in the tuple is the same as in the list of `keys`. The
-    `cursor` is used toe mogrify the data and the `templ` is the template used
+    `cursor` is used to mogrify the data and the `templ` is the template used
     for the mogrification.
     """
     defs = _makeDefValues(keys)
@@ -45,8 +45,114 @@ def _createCmdTuple(cursor, keys, templ, attribs, insertJson):
     values_to_insert = cursor.mogrify(templ, defs)
     return cursor.mogrify(templ, defs)
 
-def handleTable(table, keys, insertJson, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPassword):
+def _getTableKeys(table):
+    """Return an array of the keys for a given table"""
+    keys = None
+    if table == 'Users':
+        keys = [
+            'Id'
+            , 'Reputation'
+            , 'CreationDate'
+            , 'DisplayName'
+            , 'LastAccessDate'
+            , 'WebsiteUrl'
+            , 'Location'
+            , 'AboutMe'
+            , 'Views'
+            , 'UpVotes'
+            , 'DownVotes'
+            , 'ProfileImageUrl'
+            , 'Age'
+            , 'AccountId'
+        ]
+    elif table == 'Badges':
+        keys = [
+            'Id'
+            , 'UserId'
+            , 'Name'
+            , 'Date'
+        ]
+    elif table == 'PostLinks':
+        keys = [
+            'Id'
+            , 'CreationDate'
+            , 'PostId'
+            , 'RelatedPostId'
+            , 'LinkTypeId'
+        ]
+    elif table == 'Comments':
+        keys = [
+            'Id'
+            , 'PostId'
+            , 'Score'
+            , 'Text'
+            , 'CreationDate'
+            , 'UserId'
+        ]
+    elif table == 'Votes':
+        keys = [
+            'Id'
+            , 'PostId'
+            , 'VoteTypeId'
+            , 'UserId'
+            , 'CreationDate'
+            , 'BountyAmount'
+        ]
+    elif table == 'Posts':
+        keys = [
+            'Id'
+            , 'PostTypeId'
+            , 'AcceptedAnswerId'
+            , 'ParentId'
+            , 'CreationDate'
+            , 'Score'
+            , 'ViewCount'
+            , 'Body'
+            , 'OwnerUserId'
+            , 'LastEditorUserId'
+            , 'LastEditorDisplayName'
+            , 'LastEditDate'
+            , 'LastActivityDate'
+            , 'Title'
+            , 'Tags'
+            , 'AnswerCount'
+            , 'CommentCount'
+            , 'FavoriteCount'
+            , 'ClosedDate'
+            , 'CommunityOwnedDate'
+        ]
+    elif table == 'Tags':
+        keys = [
+            'Id'
+            , 'TagName'
+            , 'Count'
+            , 'ExcerptPostId'
+            , 'WikiPostId'
+        ]
+    elif table == 'PostHistory':
+        keys = [
+            'Id',
+            'PostHistoryTypeId',
+            'PostId',
+            'RevisionGUID',
+            'CreationDate',
+            'UserId',
+            'Text'
+        ]
+    elif table == 'Comments':
+        keys = [
+            'Id',
+            'PostId',
+            'Score',
+            'Text',
+            'CreationDate',
+            'UserId',
+        ]
+    return keys
+
+def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPassword):
     """Handle the table including the post/pre processing."""
+    keys       = _getTableKeys(table)
     dbFile     = mbDbFile if mbDbFile is not None else table + '.xml'
     tmpl       = _createMogrificationTemplate(table, keys, insertJson)
     start_time = time.time()
@@ -54,8 +160,9 @@ def handleTable(table, keys, insertJson, dbname, mbDbFile, mbHost, mbPort, mbUse
     try:
         pre    = open('./sql/' + table + '_pre.sql').read()
         post   = open('./sql/' + table + '_post.sql').read()
+        fk     = open('./sql/' + table + '_fk.sql').read()
     except IOError as e:
-        six.print_("Could not load pre/post sql. Are you running from the correct path?", file=sys.stderr)
+        six.print_("Could not load pre/post/fk sql. Are you running from the correct path?", file=sys.stderr)
         sys.exit(-1)
 
     dbConnectionParam = "dbname={}".format(dbname)
@@ -73,6 +180,7 @@ def handleTable(table, keys, insertJson, dbname, mbDbFile, mbHost, mbPort, mbUse
     # TODO Is the escaping done here correct?
     if mbPassword is not None:
         dbConnectionParam += ' password={}'.format(mbPassword)
+
 
     try:
         with pg.connect(dbConnectionParam) as conn:
@@ -95,13 +203,12 @@ def handleTable(table, keys, insertJson, dbname, mbDbFile, mbHost, mbPort, mbUse
                                                 for row_attribs in rows
                                             ]
                                         )
-
                             if len(valuesStr) > 0:
                                 cmd = 'INSERT INTO ' + table + \
                                       ' VALUES\n' + valuesStr + ';'
                                 cur.execute(cmd)
                                 conn.commit()
-                        six.print_('Table processing took {:.1f} seconds'.format(time.time() - start_time))
+                        six.print_('Table processing took {1:.1f} seconds'.format(table, time.time() - start_time))
 
                         # Post-processing (creation of indexes)
                         start_time = time.time()
@@ -110,6 +217,14 @@ def handleTable(table, keys, insertJson, dbname, mbDbFile, mbHost, mbPort, mbUse
                             cur.execute(post)
                             conn.commit()
                         six.print_('Post processing took {} seconds'.format(time.time() - start_time))
+                        if createFk:
+                            # fk-processing (creation of foreign keys)
+                            start_time = time.time()
+                            six.print_('fk processing ...')
+                            if post != '':
+                                cur.execute(fk)
+                                conn.commit()
+                            six.print_('fk processing took {} seconds'.format(time.time() - start_time))
 
                 except IOError as e:
                     six.print_("Could not read from file {}.".format(dbFile), file=sys.stderr)
@@ -121,8 +236,6 @@ def handleTable(table, keys, insertJson, dbname, mbDbFile, mbHost, mbPort, mbUse
     except pg.Warning as w:
         six.print_("Warning from the database.", file=sys.stderr)
         six.print_("pg.Warning: {0}".format(str(w)), file=sys.stderr)
-
-
 
 #############################################################
 
@@ -173,116 +286,16 @@ parser.add_argument( '-j', '--insert-json'
                    , action = 'store_true'
                    , default = False
                    )
+
+parser.add_argument( '--foreign-keys'
+                   , help    = 'Create foreign keys.'
+                   , action = 'store_true'
+                   , default = False
+                   )
+
 args = parser.parse_args()
 
 table = args.table
-keys = None
-
-if table == 'Users':
-    keys = [
-        'Id'
-      , 'Reputation'
-      , 'CreationDate'
-      , 'DisplayName'
-      , 'LastAccessDate'
-      , 'WebsiteUrl'
-      , 'Location'
-      , 'AboutMe'
-      , 'Views'
-      , 'UpVotes'
-      , 'DownVotes'
-      , 'ProfileImageUrl'
-      , 'Age'
-      , 'AccountId'
-    ]
-elif table == 'Badges':
-    keys = [
-        'Id'
-      , 'UserId'
-      , 'Name'
-      , 'Date'
-    ]
-elif table == 'PostLinks':
-    keys = [
-        'Id'
-      , 'CreationDate'
-      , 'PostId'
-      , 'RelatedPostId'
-      , 'LinkTypeId'
-    ]
-elif table == 'Comments':
-    keys = [
-        'Id'
-      , 'PostId'
-      , 'Score'
-      , 'Text'
-      , 'CreationDate'
-      , 'UserId'
-    ]
-elif table == 'Votes':
-    keys = [
-        'Id'
-      , 'PostId'
-      , 'VoteTypeId'
-      , 'UserId'
-      , 'CreationDate'
-      , 'BountyAmount'
-    ]
-elif table == 'Posts':
-    keys = [
-        'Id'
-      , 'PostTypeId'
-      , 'AcceptedAnswerId'
-      , 'ParentId'
-      , 'CreationDate'
-      , 'Score'
-      , 'ViewCount'
-      , 'Body'
-      , 'OwnerUserId'
-      , 'LastEditorUserId'
-      , 'LastEditorDisplayName'
-      , 'LastEditDate'
-      , 'LastActivityDate'
-      , 'Title'
-      , 'Tags'
-      , 'AnswerCount'
-      , 'CommentCount'
-      , 'FavoriteCount'
-      , 'ClosedDate'
-      , 'CommunityOwnedDate'
-    ]
-
-    # If the user has not explicitly asked for loading the body, we replace it with NULL
-    if not args.with_post_body:
-        specialRules[('Posts', 'Body')] = 'NULL'
-
-elif table == 'Tags':
-    keys = [
-        'Id'
-      , 'TagName'
-      , 'Count'
-      , 'ExcerptPostId'
-      , 'WikiPostId'
-    ]
-elif table == 'PostHistory':
-    keys = [
-        'Id',
-        'PostHistoryTypeId',
-        'PostId',
-        'RevisionGUID',
-        'CreationDate',
-        'UserId',
-        'Text'
-    ]
-elif table == 'Comments':
-    keys = [
-        'Id',
-        'PostId',
-        'Score',
-        'Text',
-        'CreationDate',
-        'UserId',
-    ]
 
 try:
     # Python 2/3 compatibility
@@ -290,10 +303,14 @@ try:
 except NameError:
     pass
 
-choice = input('This will drop the {} table. Are you sure [y/n]?'.format(table))
 
+if table == 'Posts':
+    # If the user has not explicitly asked for loading the body, we replace it with NULL
+    if not args.with_post_body:
+        specialRules[('Posts', 'Body')] = 'NULL'
+
+choice = input('This will drop the {} table. Are you sure [y/n]?'.format(table))
 if len(choice) > 0 and choice[0].lower() == 'y':
     handleTable(table, keys, args.insert_json, args.dbname, args.file, args.host, args.port, args.username, args.password)
 else:
     six.print_("Cancelled.")
-
