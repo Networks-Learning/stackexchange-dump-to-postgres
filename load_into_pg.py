@@ -150,7 +150,7 @@ def _getTableKeys(table):
         ]
     return keys
 
-def handleTable(table, keys, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPassword):
+def handleTable(table, insertJson, createFk, dbname, mbDbFile, mbHost, mbPort, mbUsername, mbPassword):
     """Handle the table including the post/pre processing."""
     keys       = _getTableKeys(table)
     dbFile     = mbDbFile if mbDbFile is not None else table + '.xml'
@@ -309,8 +309,8 @@ if table == 'Posts':
     if not args.with_post_body:
         specialRules[('Posts', 'Body')] = 'NULL'
 
-choice = input('This will drop the {} table. Are you sure [y/n]?'.format(table))
+choice = input('This will drop the {} table. Are you sure [y/n]? '.format(table))
 if len(choice) > 0 and choice[0].lower() == 'y':
-    handleTable(table, keys, args.insert_json, args.dbname, args.file, args.host, args.port, args.username, args.password)
+    handleTable(table, args.insert_json, args.foreign_keys, args.dbname, args.file, args.host, args.port, args.username, args.password)
 else:
     six.print_("Cancelled.")
