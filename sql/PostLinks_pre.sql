@@ -4,5 +4,6 @@ CREATE TABLE PostLinks (
    CreationDate      timestamp   not NUll    ,
    PostId            int         not NULL    ,
    RelatedPostId     int         not NULL    ,
-   LinkTypeId        int         not Null
+   LinkTypeId        int         not Null    ,
+   jsonfield         jsonb
 );

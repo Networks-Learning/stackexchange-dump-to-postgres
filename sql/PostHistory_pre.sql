@@ -6,5 +6,6 @@ CREATE TABLE PostHistory (
     RevisionGUID       text               ,
     CreationDate       timestamp not NULL ,
     UserId             int                ,
-    PostText           text
+    PostText           text               ,
+    jsonfield          jsonb
 );

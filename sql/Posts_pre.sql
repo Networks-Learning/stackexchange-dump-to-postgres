@@ -19,6 +19,7 @@ CREATE TABLE Posts (
     CommentCount           int                ,
     FavoriteCount          int                ,
     ClosedDate             timestamp          ,
-    CommunityOwnedDate     timestamp
+    CommunityOwnedDate     timestamp          ,
+    jsonfield              jsonb
 );
 

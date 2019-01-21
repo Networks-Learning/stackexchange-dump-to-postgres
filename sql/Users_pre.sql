@@ -13,6 +13,7 @@ CREATE TABLE Users (
    DownVotes         int         not NULL    ,
    ProfileImageUrl   text                    ,
    Age               int                     ,
-   AccountId         int         -- NULL accountId == deleted account?
+   AccountId         int                     , -- NULL accountId == deleted account?
+   jsonfield         jsonb
 );
 
