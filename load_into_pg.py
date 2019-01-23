@@ -208,7 +208,7 @@ def handleTable(table, insertJson, createFk, dbname, mbDbFile, mbHost, mbPort, m
                                       ' VALUES\n' + valuesStr + ';'
                                 cur.execute(cmd)
                                 conn.commit()
-                        six.print_('Table processing took {1:.1f} seconds'.format(table, time.time() - start_time))
+                        six.print_('Table {0} processing took {1:.1f} seconds'.format(table, time.time() - start_time))
 
                         # Post-processing (creation of indexes)
                         start_time = time.time()
