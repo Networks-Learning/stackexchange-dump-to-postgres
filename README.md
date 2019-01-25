@@ -34,7 +34,7 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
    - `psql stackoverflow < ./sql/optional_post.sql`
    - Again, remember to user the correct database name here, if not `stackoverflow`.
 
-## Caveats and TODOs
+## Caveats
 
  - It prepares some indexes and views which may not be necessary for your analysis.
  - The `Body` field in `Posts` table is NOT populated by default. You have to use `--with-post-body` argument to include it.
@@ -44,3 +44,8 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
 
  - The `tags.xml` is missing from the data dump. Hence, the `PostTag` and `UserTagQA` tables will be empty after `final_post.sql`.
  - The `ViewCount` in `Posts` is sometimes equal to an `empty` value. It is replaced by `NULL` in those cases.
+
+
+## Acknowledgement
+
+[@madtibo](https://github.com/madtibo) made significant contributions by adding `jsonb` and Foreign Key support.
