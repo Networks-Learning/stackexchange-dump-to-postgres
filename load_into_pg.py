@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import sys
 import time
 import argparse
@@ -245,7 +245,7 @@ def handleTable(table, insertJson, createFk, mbDbFile, dbConnectionParam):
                         if post != '':
                             cur.execute(post)
                             conn.commit()
-                        six.print_('Post processing took {} seconds'.format(time.time() - start_time))
+                        six.print_('Post processing took {0:.1f} seconds'.format(time.time() - start_time))
                         if createFk:
                             # fk-processing (creation of foreign keys)
                             start_time = time.time()
@@ -253,7 +253,7 @@ def handleTable(table, insertJson, createFk, mbDbFile, dbConnectionParam):
                             if post != '':
                                 cur.execute(fk)
                                 conn.commit()
-                            six.print_('fk processing took {} seconds'.format(time.time() - start_time))
+                            six.print_('fk processing took {0:.1f} seconds'.format(time.time() - start_time))
 
                 except IOError as e:
                     six.print_("Could not read from file {}.".format(dbFile), file=sys.stderr)
@@ -393,19 +393,22 @@ if args.file and args.table:
 
 # load a project
 elif args.so_project:
-    import urllib.request
     import libarchive
 
-    # download the 7z archive in /tmp
-    file_name = args.so_project + '.stackexchange.com.7z'
-    url = '{0}/{1}'.format(args.archive_url, file_name)
-    filepath = '/tmp/'+file_name
-    six.print_('Downloading the archive, please be patient ...')
-    try:
-        urllib.request.urlretrieve(url, filepath, show_progress)
-    except Exception as e:
-        six.print_('Error: impossible to download the {0} archive ({1})'.format(url, e))
-        exit(1)
+    filepath = None
+    if args.file:
+        filepath = args.file
+    else:
+        # download the 7z archive in /tmp
+        file_name = args.so_project + '.stackexchange.com.7z'
+        url = '{0}/{1}'.format(args.archive_url, file_name)
+        filepath = '/tmp/'+file_name
+        six.print_('Downloading the archive, please be patient ...')
+        try:
+            six.moves.urllib.request.urlretrieve(url, filepath, show_progress)
+        except Exception as e:
+            six.print_('Error: impossible to download the {0} archive ({1})'.format(url, e))
+            exit(1)
 
     try:
         libarchive.extract_file(filepath)
@@ -417,7 +420,7 @@ elif args.so_project:
 
     for table in tables:
         six.print_('Load {0}.xml file'.format(table))
-        handleTable(table, args.insert_json, args.foreign_keys, args.file, dbConnectionParam)
+        handleTable(table, args.insert_json, args.foreign_keys, None, dbConnectionParam)
         # remove file
         os.remove(table+'.xml')
 
