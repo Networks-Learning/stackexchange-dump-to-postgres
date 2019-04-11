@@ -272,10 +272,10 @@ def moveTableToSchema(table, schemaName, dbConnectionParam):
         with pg.connect(dbConnectionParam) as conn:
             with conn.cursor() as cur:
                 # create the schema
-                cur.execute('CREATE SCHEMA IF NOT EXISTS '+schemaName+';')
+                cur.execute('CREATE SCHEMA IF NOT EXISTS ' + schemaName + ';')
                 conn.commit()
                 # move the table to the right schema
-                cur.execute('ALTER TABLE '+table+' SET SCHEMA '+schemaName+';')
+                cur.execute('ALTER TABLE '+table+' SET SCHEMA ' + schemaName + ';')
                 conn.commit()
     except pg.Error as e:
         six.print_("Error in dealing with the database.", file=sys.stderr)
@@ -305,7 +305,7 @@ parser.add_argument( '-f', '--file'
                    )
 
 parser.add_argument( '-s', '--so-project'
-                   , help    = 'stackexchange project to load.'
+                   , help    = 'StackExchange project to load.'
                    , default = None
                    )
 
@@ -315,8 +315,8 @@ parser.add_argument( '--archive-url'
                    )
 
 parser.add_argument( '-k', '--keep-archive'
-                   , help    = 'should we keep the downloaded archive.'
-                   , action = 'store_true'
+                   , help    = 'Will preserve the downloaded archive instead of deleting it.'
+                   , action  = 'store_true'
                    , default = False
                    )
 
