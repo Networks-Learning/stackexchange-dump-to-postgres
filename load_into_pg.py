@@ -394,16 +394,23 @@ if args.file and args.table:
 # load a project
 elif args.so_project:
     import libarchive
+    import tempfile
 
     filepath = None
     if args.file:
         filepath = args.file
+        url = filepath
     else:
-        # download the 7z archive in /tmp
+        # download the 7z archive in tempdir
         file_name = args.so_project + '.stackexchange.com.7z'
         url = '{0}/{1}'.format(args.archive_url, file_name)
-        filepath = '/tmp/'+file_name
-        six.print_('Downloading the archive, please be patient ...')
+        temp_dir = tempfile.gettempdir()
+        if temp_dir == 'None':
+            six.print_('WARNING: Could not find temporary directory. Use current directory instead.')
+            temp_dir = os.getcwd()
+        filepath = os.path.join(temp_dir, file_name)
+        six.print_('Downloading the archive in {0}'.format(filepath))
+        six.print_('please be patient ...')
         try:
             six.moves.urllib.request.urlretrieve(url, filepath, show_progress)
         except Exception as e:

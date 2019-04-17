@@ -7,7 +7,7 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
 ## Dependencies
 
  - [`lxml`](http://lxml.de/installation.html)
- - [`psychopg2`](http://initd.org/psycopg/docs/install.html)
+ - [`psycopg2`](http://initd.org/psycopg/docs/install.html)
 
 ## Usage
 
