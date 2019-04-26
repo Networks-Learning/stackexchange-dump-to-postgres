@@ -397,6 +397,7 @@ elif args.so_project:
     import tempfile
 
     filepath = None
+    temp_dir = None
     if args.file:
         filepath = args.file
         url = filepath
@@ -404,10 +405,7 @@ elif args.so_project:
         # download the 7z archive in tempdir
         file_name = args.so_project + '.stackexchange.com.7z'
         url = '{0}/{1}'.format(args.archive_url, file_name)
-        temp_dir = tempfile.gettempdir()
-        if temp_dir == 'None':
-            six.print_('WARNING: Could not find temporary directory. Use current directory instead.')
-            temp_dir = os.getcwd()
+        temp_dir = tempfile.mkdtemp(prefix='so_')
         filepath = os.path.join(temp_dir, file_name)
         six.print_('Downloading the archive in {0}'.format(filepath))
         six.print_('please be patient ...')
@@ -432,8 +430,12 @@ elif args.so_project:
         os.remove(table+'.xml')
 
     if not args.keep_archive:
-        # remove archive
         os.remove(filepath)
+        if temp_dir:
+            # remove the archive and the temporary directory
+            os.rmdir(temp_dir)
+        else:
+            six.print_("Archive '{0}' deleted".format(filepath))
 
     if args.schema_name != 'public':
         for table in tables:
