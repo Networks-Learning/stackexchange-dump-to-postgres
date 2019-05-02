@@ -295,6 +295,7 @@ def moveTableToSchema(table, schemaName, dbConnectionParam):
 
 #############################################################
 
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--table'
                    , help    = 'The table to work on.'
@@ -349,14 +350,14 @@ parser.add_argument('-H', '--host'
                    )
 
 parser.add_argument('--with-post-body'
-                   , help   = 'Import the posts with the post body. Only used if importing Posts.xml'
-                   , action = 'store_true'
+                   , help    = 'Import the posts with the post body. Only used if importing Posts.xml'
+                   , action  = 'store_true'
                    , default = False
                    )
 
 parser.add_argument('-j', '--insert-json'
                    , help    = 'Insert raw data as JSON.'
-                   , action = 'store_true'
+                   , action  = 'store_true'
                    , default = False
                    )
 
@@ -367,7 +368,7 @@ parser.add_argument('-n', '--schema-name'
 
 parser.add_argument('--foreign-keys'
                    , help    = 'Create foreign keys.'
-                   , action = 'store_true'
+                   , action  = 'store_true'
                    , default = False
                    )
 
