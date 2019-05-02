@@ -8,7 +8,7 @@ Schema hints are taken from [a post on Meta.StackExchange](http://meta.stackexch
 
  - [`lxml`](http://lxml.de/installation.html)
  - [`psycopg2`](http://initd.org/psycopg/docs/install.html)
- - [`libarchive`](https://www.libarchive.org/)
+ - [`libarchive-c`](https://pypi.org/project/libarchive-c/)
 
 ## Usage
 
