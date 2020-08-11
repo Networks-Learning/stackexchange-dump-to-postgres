@@ -32,5 +32,7 @@ def batch(iterable, size):
     sourceiter = iter(iterable)
     while True:
         batchiter = islice(sourceiter, size)
-        yield chain([six.next(batchiter)], batchiter)
-
+        try:
+            yield chain([six.next(batchiter)], batchiter)
+        except StopIteration:
+            return
