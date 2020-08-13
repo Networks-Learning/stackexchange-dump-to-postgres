@@ -41,7 +41,7 @@ You can use the script to download a given stackexchange compressed file from
 [archive.org](https://ia800107.us.archive.org/27/items/stackexchange/) and load
 all the tables at once, using the `-s` switch.
 
-You will need the `urllib` and `libarchive` modules.
+You will need the `urllib` and `libarchive-c` modules.
 
 If you give a schema name using the `-n` switch, all the tables will be moved
 to the given schema. This schema will be created in the script.
