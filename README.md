@@ -16,9 +16,9 @@ Install requirements, create a `stackoverflow` database, and use
 ``` console
 $ pip install -r requirements.txt
 ...
-Successfully installed argparse-1.2.1 libarchive-c-2.9 lxml-4.5.2 psycopg2-binary-2.8.4 six-1.10.0 wsgiref-0.1.2
-$ createdb stackoverflow
-$ python load_into_pg.py -s beer
+Successfully installed argparse-1.2.1 libarchive-c-2.9 lxml-4.5.2 psycopg2-binary-2.8.4 six-1.10.0
+$ createdb beerSO
+$ python load_into_pg.py -s beer -d beerSO
 ```
 
 This will download compressed files from
@@ -52,13 +52,13 @@ Then load each file with e.g. `python load_into_pg.py -t Badges`.
 After all the initial tables have been created:
 
 ``` console
-$ psql stackoverflow < ./sql/final_post.sql
+$ psql beerSO < ./sql/final_post.sql
 ```
 
 For some additional indexes and tables, you can also execute the the following;
 
 ``` console
-$ psql stackoverflow < ./sql/optional_post.sql
+$ psql beerSO < ./sql/optional_post.sql
 ```
 
 If you give a schema name using the `-n` switch, all the tables will be moved
@@ -84,3 +84,4 @@ schema name: `SET search_path TO <myschema>;`
 ## Acknowledgement
 
 [@madtibo](https://github.com/madtibo) made significant contributions by adding `jsonb` and Foreign Key support.
+[@bersace](https://github.com/bersace) brought the dependencies and the `README.md` instructions into 2020.
