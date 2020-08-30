@@ -1,6 +1,5 @@
 argparse==1.2.1
-distribute==0.6.24
-lxml==3.4.1
-psycopg2==2.5.4
-wsgiref==0.1.2
+libarchive-c==2.9
+lxml==4.5.2
+psycopg2-binary==2.8.4
 six==1.10.0
