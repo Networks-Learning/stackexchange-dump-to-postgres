@@ -1,5 +1,5 @@
 argparse==1.2.1
 libarchive-c==2.9
-lxml==4.5.2
+lxml==4.6.2
 psycopg2-binary==2.8.4
 six==1.10.0
