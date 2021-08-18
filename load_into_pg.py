@@ -295,8 +295,8 @@ def moveTableToSchema(table, schemaName, dbConnectionParam):
 
 #############################################################
 
-
 parser = argparse.ArgumentParser()
+
 parser.add_argument(
     "-t",
     "--table",
@@ -322,11 +322,17 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "-f", "--file", help="Name of the file to extract data from.", default=None
+    "-f",
+    "--file",
+    help="Name of the file to extract data from.",
+    default=None
 )
 
 parser.add_argument(
-    "-s", "--so-project", help="StackExchange project to load.", default=None
+    "-s",
+    "--so-project",
+    help="StackExchange project to load.",
+    default=None
 )
 
 parser.add_argument(
@@ -343,15 +349,33 @@ parser.add_argument(
     default=False,
 )
 
-parser.add_argument("-u", "--username", help="Username for the database.", default=None)
-
-parser.add_argument("-p", "--password", help="Password for the database.", default=None)
-
 parser.add_argument(
-    "-P", "--port", help="Port to connect with the database on.", default=None
+    "-u",
+    "--username",
+    help="Username for the database.",
+    default=None
 )
 
-parser.add_argument("-H", "--host", help="Hostname for the database.", default=None)
+parser.add_argument(
+    "-p",
+    "--password",
+    help="Password for the database.",
+    default=None
+)
+
+parser.add_argument(
+    "-P",
+    "--port",
+    help="Port to connect with the database on.",
+    default=None
+)
+
+parser.add_argument(
+    "-H",
+    "--host",
+    help="Hostname for the database.",
+    default=None
+)
 
 parser.add_argument(
     "--with-post-body",
@@ -369,11 +393,17 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    "-n", "--schema-name", help="Use specific schema.", default="public"
+    "-n",
+    "--schema-name",
+    help="Use specific schema.",
+    default="public"
 )
 
 parser.add_argument(
-    "--foreign-keys", help="Create foreign keys.", action="store_true", default=False
+    "--foreign-keys",
+    help="Create foreign keys.",
+    action="store_true",
+    default=False
 )
 
 args = parser.parse_args()
