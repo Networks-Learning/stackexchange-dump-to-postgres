@@ -402,10 +402,18 @@ if args.file and args.table:
         handleTable(
             table, args.insert_json, args.foreign_keys, args.file, dbConnectionParam
         )
+
+        # Once "handleTable" has created the table in the "public"
+        # schema, move the table to the given schema if and only if
+        # the user specified an schema as an argument for the script
+        # and the schema name is different than "public".
+
+        if args.schema_name != "public":
+            moveTableToSchema(table, args.schema_name, dbConnectionParam)
+
     else:
         six.print_("Cancelled.")
-    if args.schema_name != "public":
-        moveTableToSchema(table, args.schema_name, dbConnectionParam)
+
     exit(0)
 
 # load a project
