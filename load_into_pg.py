@@ -72,25 +72,6 @@ def getConnectionParameters():
     return parameters
 
 
-def buildConnectionString(dbname, mbHost, mbPort, mbUsername, mbPassword):
-    dbConnectionParam = "dbname={}".format(dbname)
-
-    if mbPort is not None:
-        dbConnectionParam += " port={}".format(mbPort)
-
-    if mbHost is not None:
-        dbConnectionParam += " host={}".format(mbHost)
-
-    # TODO Is the escaping done here correct?
-    if mbUsername is not None:
-        dbConnectionParam += " user={}".format(mbUsername)
-
-    # TODO Is the escaping done here correct?
-    if mbPassword is not None:
-        dbConnectionParam += " password={}".format(mbPassword)
-    return dbConnectionParam
-
-
 def _makeDefValues(keys):
     """Returns a dictionary containing None for all keys."""
     return dict(((k, None) for k in keys))
