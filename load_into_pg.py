@@ -46,6 +46,31 @@ def show_progress(block_num, block_size, total_size):
         file_part = None
         six.print_("")
 
+def getConnectionParameters():
+    """Get the parameters for the connection to the database."""
+
+    parameters = {}
+
+    if args.dbname:
+        parameters['dbname'] = args.dbname
+
+    if args.host:
+        parameters['host'] = args.host
+
+    if args.port:
+        parameters['port'] = args.port
+
+    if args.username:
+        parameters['user'] = args.username
+
+    if args.password:
+        parameters['password'] = args.password
+
+    if args.schema_name:
+        parameters['options'] = "-c search_path=" + args.schema_name
+
+    return parameters
+
 
 def buildConnectionString(dbname, mbHost, mbPort, mbUsername, mbPassword):
     dbConnectionParam = "dbname={}".format(dbname)
