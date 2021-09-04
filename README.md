@@ -10,8 +10,7 @@ and from [StackExchange Data Explorer](http://data.stackexchange.com).
 
 ## Quickstart
 
-Install requirements, create a `stackoverflow` database, and use
-`load_into_pg.py` script:
+Install requirements, create a new database (e.g. `beerSO` below), and use `load_into_pg.py` script:
 
 ``` console
 $ pip install -r requirements.txt
@@ -83,5 +82,6 @@ schema name: `SET search_path TO <myschema>;`
 
 ## Acknowledgement
 
-[@madtibo](https://github.com/madtibo) made significant contributions by adding `jsonb` and Foreign Key support.
-[@bersace](https://github.com/bersace) brought the dependencies and the `README.md` instructions into 2020.
+ - [@madtibo](https://github.com/madtibo) made significant contributions by adding `jsonb` and Foreign Key support.
+ - [@bersace](https://github.com/bersace) brought the dependencies and the `README.md` instructions into 2020s.
+ - [@rdrg109](https://github.com/rdrg109) simplified handling of non-public schemas and fixed bugs associated with re-importing tables.
